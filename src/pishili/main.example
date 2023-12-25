@@ -1,0 +1,593 @@
+/*****************************************************************************/
+/*
+ * PiSHi LE (Lite edition) - Fundamentals of the King's Crook graphics engine.
+ * 
+ *   by EMMIR 2018-2022
+ *   
+ *   YouTube: https://www.youtube.com/c/LMP88
+ *   
+ * This software is released into the public domain.
+ */
+/*****************************************************************************/
+
+#include "config.h"
+#include "pl.h"
+
+/*  main.c
+ * 
+ * Basic demo showing how to define a 3D scene, generate geometry,
+ * import geometry, implement first person camera controls, and transform
+ * the geometry.
+ * 
+ * Controls:
+ *      Arrow keys - looking
+ *      W/A/S/D keys - movement
+ *      T/G keys - move up and down
+ *      C - cycle through culling modes
+ *      1 - flat rendering
+ *      2 - textured rendering
+ *      3 - toggle between two FOVs
+ *      SPACE - start/stop dynamic transformation
+ * 
+ */
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+
+#include "fw/fw.h"
+
+extern void *
+EXT_calloc(unsigned n, unsigned esz)
+{
+    return calloc(n, esz);
+}
+
+extern void
+EXT_free(void *p)
+{
+    free(p);
+}
+
+extern void
+EXT_error(int err_id, char *modname, char *msg)
+{
+    printf("vx error 0x%x in %s: %s\n", err_id, modname, msg);
+    sys_kill();
+    getchar();
+    exit(0);
+}
+
+#define VW 1024
+#define VH 768
+//#define VW 896
+//#define VH 504
+/* grid size */
+#define GRSZ 10
+/* movement speed */
+static int MOVSPD=4;
+
+
+static struct PL_OBJ *floortile;
+static struct PL_OBJ *bluecube;
+static struct PL_OBJ *redcube;
+static struct PL_OBJ *yellowcube;
+static struct PL_OBJ *greencube;
+static int camrx = 50, camry = 0;
+static int vv = 0;
+static int x = CUSZ/2, y = 4000, z = CUSZ/2;
+static uint64_t clicks = 0;
+static uint64_t bots_click = 0;
+//static struct PL_TEX checktex;
+//static int checker[PL_REQ_TEX_DIM * PL_REQ_TEX_DIM];
+static unsigned fpsclock = 0;
+static int fps = 0;
+static text_object_t* coords;
+static text_object_t* compass;
+static text_object_t* helptext;
+static int showtext = 0;
+static int airplanemode = 0;
+static int inventory = 0;
+static useconds_t sleepytime = 0;
+static botlist_t botlist;
+
+
+
+
+#undef IMG
+#include "pics/rock.h"
+static struct PL_TEX rocktex;
+static unsigned char rockimg[ PL_REQ_TEX_DIM ][ PL_REQ_TEX_DIM ][ 4 ] = IMG;
+static struct PL_OBJ* rockcube;
+
+static
+void maketex_rock
+  ()
+{
+  PL_texture(&rocktex);
+  rocktex.data = (int*)rockimg;
+  rockcube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 255, 255, 255);
+  PL_texture(NULL);
+}
+
+
+
+#undef IMG
+#include "pics/rock2.h"
+static struct PL_TEX rock2tex;
+static unsigned char rock2img[ PL_REQ_TEX_DIM ][ PL_REQ_TEX_DIM ][ 4 ] = IMG;
+static struct PL_OBJ* rock2cube;
+
+static
+void maketex_rock2
+  ()
+{
+  PL_texture(&rock2tex);
+  rock2tex.data = (int*)rock2img;
+  rock2cube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 255, 255, 255);
+  PL_texture(NULL);
+}
+
+
+
+#undef IMG
+#include "pics/wood.h"
+static struct PL_TEX woodtex;
+static unsigned char woodimg[ PL_REQ_TEX_DIM ][ PL_REQ_TEX_DIM ][ 4 ] = IMG;
+static struct PL_OBJ* woodcube;
+
+static
+void maketex_wood
+  ()
+{
+  PL_texture(&woodtex);
+  woodtex.data = (int*)woodimg;
+  woodcube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 255, 255, 255);
+  PL_texture(NULL);
+}
+
+
+
+#undef IMG
+#include "pics/ground.h"
+static struct PL_TEX groundtex;
+static unsigned char groundimg[ PL_REQ_TEX_DIM ][ PL_REQ_TEX_DIM ][ 4 ] = IMG;
+static struct PL_OBJ* groundcube;
+
+static
+void maketex_ground
+  ()
+{
+  PL_texture(&groundtex);
+  groundtex.data = (int*)groundimg;
+  groundcube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 255, 255, 255);
+  PL_texture(NULL);
+}
+
+
+
+static void
+init
+  (void)
+{
+
+  maketex_rock();
+  maketex_rock2();
+  maketex_wood();
+  maketex_ground();
+  botlist_init(&botlist);
+
+#ifdef _BOTS
+  {
+    for (unsigned i=0; i < NBOTS; i++) {
+      bot_t bot;
+      bot_init(&bot);
+      botlist_push(&botlist, bot);
+    }
+  }
+#endif
+
+  floortile = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_TOP, 77, 101, 94);
+
+  bluecube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 128, 0, 255);
+  redcube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 255, 0, 0);
+  yellowcube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 128, 128, 0);
+  greencube = PL_gen_box(CUSZ, CUSZ, CUSZ, PL_ALL, 0, 128, 0);
+
+  PL_fov = 9;
+    
+  PL_cur_tex = NULL;
+  PL_cull_mode = PL_CULL_BACK;
+  PL_raster_mode = PL_TEXTURED;
+
+  coords = overlay_add_textobject(30, 30, "");
+  compass = overlay_add_textobject(30, 50, "");
+  helptext = overlay_add_textobject(
+    30, 70,
+    "         ==== Key Bindings ====\n"
+    "h        This text.\n"
+    "q        Toggle data display.\n"
+    "a        Toggle airplane mode.\n"
+    "i        Toggle inventory display.\n"
+    "w,s      (non airplane mode) Move.\n"
+    "t,g      Accellerate, decellerate.\n"
+    "arrows   (airplane mode) Move (non) Look.\n"
+    "space    (non airplane mode) Jump.\n"
+    "esc      Exit.\n"
+  );
+  text_object_set_visibility(helptext, 0);
+
+  fpsclock = clk_sample();
+}
+
+static void
+update
+  (void)
+{
+  int dx = 0, dy = 0, dz = 0;
+
+  if (pkb_key_pressed(FW_KEY_ESCAPE)) {
+    sys_shutdown();
+  }
+  if (pkb_key_held(FW_KEY_ARROW_RIGHT)) {
+    camry += 1;
+    if (camry > 256) { camry -= 256; }
+  }
+  if (pkb_key_held(FW_KEY_ARROW_LEFT)) {
+    camry -= 1;
+    if (camry < 0) { camry += 256; }
+  }
+  if (pkb_key_held(FW_KEY_ARROW_UP)) {
+    camrx -= 1;
+    if (camrx < 0) { camrx += 256; }
+  }
+  if (pkb_key_held(FW_KEY_ARROW_DOWN)) {
+    camrx += 1;
+    if (camrx > 256) { camrx -= 256; }
+  }
+
+  if (pkb_key_held('w') || airplanemode) {
+    dx = (MOVSPD * PL_sin[camry & PL_TRIGMSK]) >> PL_P;
+    if (airplanemode) {
+      dy = -((MOVSPD * PL_sin[camrx & PL_TRIGMSK]) >> PL_P);
+    }
+    dz = (MOVSPD * PL_cos[camry & PL_TRIGMSK]) >> PL_P;
+  }
+  if (pkb_key_held('s')) {
+    dx = -((MOVSPD * PL_sin[camry & PL_TRIGMSK]) >> PL_P);
+    if (airplanemode) {
+      dy = ((MOVSPD * PL_sin[camrx & PL_TRIGMSK]) >> PL_P);
+    }
+    dz = -((MOVSPD * PL_cos[camry & PL_TRIGMSK]) >> PL_P);
+  }
+  if (pkb_key_pressed('a')) {
+    airplanemode = !airplanemode;
+  }
+
+/*
+  if (pkb_key_held('a')) {
+          x -= (MOVSPD * PL_cos[camry & PL_TRIGMSK]) >> PL_P;
+          z += (MOVSPD * PL_sin[camry & PL_TRIGMSK]) >> PL_P;
+  }
+  if (pkb_key_held('d')) {
+          x += (MOVSPD * PL_cos[camry & PL_TRIGMSK]) >> PL_P;
+          z -= (MOVSPD * PL_sin[camry & PL_TRIGMSK]) >> PL_P;
+  }
+*/
+
+  if (pkb_key_pressed('h')) {
+    text_object_set_visibility(helptext, !(helptext->visible) );
+  }
+
+  if (pkb_key_held('t')) { /* accellerate */
+    if (airplanemode) {
+      MOVSPD++;
+      if (MOVSPD > 32) {
+        MOVSPD = 32;
+      }
+    }
+  }
+  if (pkb_key_held('g')) { /* decellerate */
+    if (airplanemode) {
+      MOVSPD--;
+      if (MOVSPD < 4) {
+        MOVSPD = 4;
+      }
+    }
+  }
+  if (pkb_key_pressed('i')) { /* 'inventory' */
+    inventory = !inventory;
+    overlay_set_inventory(inventory);
+  }
+  if (pkb_key_pressed('l')) { /* 'level' */
+          camrx = 0;
+  }
+  if (pkb_key_pressed('n')) { /* 'north' */
+          camry = 0;
+  }
+  if (pkb_key_pressed('q')) { /* dashboard */
+    showtext = !showtext;
+    if (showtext) {
+      text_object_set_visibility(coords, 1);
+      text_object_set_visibility(compass, 1);
+    } else {
+      text_object_set_visibility(coords, 0);
+      text_object_set_visibility(compass, 0);
+    }
+  }
+/*
+  if (pkb_key_pressed('c')) {
+    static int cmod = PL_CULL_BACK;
+    if (cmod == PL_CULL_BACK) {
+      cmod = PL_CULL_NONE;
+    } else if (cmod == PL_CULL_FRONT) {
+      cmod = PL_CULL_BACK;
+    } else {
+      cmod = PL_CULL_FRONT;
+    }
+    PL_cull_mode = cmod;
+  }
+*/
+
+  if (pkb_key_pressed('0')) {
+  }
+  if (pkb_key_pressed('1')) {
+  }
+  if (pkb_key_pressed('2')) {
+  }
+  if (pkb_key_pressed('3')) {
+  }
+  if (pkb_key_pressed('4')) {
+  }
+  if (pkb_key_pressed('5')) {
+  }
+  if (pkb_key_pressed('6')) {
+  }
+  if (pkb_key_pressed('7')) {
+  }
+  if (pkb_key_pressed('8')) {
+  }
+  if (pkb_key_pressed('9')) {
+  }
+
+  if (pkb_key_pressed('z')) {
+    if (PL_fov == 8) {
+      PL_fov = 9;
+    } else {
+      PL_fov = 8;
+    }
+    printf("fov: %d\n", PL_fov);
+  }
+
+  if (dx) {
+    if ((x / CUSZ) != ((x + (8 * dx)) / CUSZ)) {
+      struct pillar pillar;
+      pillar_get_real(x + (8 * dx), z + (8 * dz), &pillar);
+      if (((y / CUSZ) - 2) >= (int)(pillar.height)) {
+        x += dx;
+      }
+    } else {
+      x += dx;
+    }
+  }
+  if (dy) {
+    y += dy;
+    if (y < 256) { y = 256; }
+    if (y > 10000) { y = 10000; }
+  }
+  if (dz) {
+    if ((z / CUSZ) != ((z + (8 * dz)) / CUSZ)) {
+      struct pillar pillar;
+      pillar_get_real(x + (8 * dx), z + (8 * dz), &pillar);
+      if (((y / CUSZ) - 2) >= (int)(pillar.height)) {
+        z += dz;
+      }
+    } else {
+      z += dz;
+    }
+  }
+  if (pkb_key_pressed(' ') && vv == 0) { /* jump */
+    vv = -JUMPSPEED;
+  }
+
+  if (!airplanemode) { /* perform falling check */
+    int yy = (y / CUSZ) - 2;
+    struct pillar pillar;
+    pillar_get_real(x, z, &pillar);
+    if (yy < (int)(pillar.height)) {
+      vv = 0;
+      y = ((pillar.height+2) * CUSZ);
+    } else if (yy > (int)(pillar.height)) {
+      if (vv == 0) {
+        vv = INITIALVELOCITY;
+      } else if (vv < TERMINALVELOCITY) {
+        vv++;
+      }
+    }
+    if (vv) {
+      y -= vv;
+    }
+  }
+
+#ifdef _BOTS
+  if (bots_click < clicks - (fps / 10)) {
+    botlist_iterate(&botlist, botlist_move_bot, 0);
+    bots_click = clicks;
+  }
+#endif
+
+}
+
+static time_t          t0, t;
+static const unsigned  t_cycle = 60;
+static const unsigned  t_bgswitch = 24;
+static const unsigned  t_background[][ 4 ] = {
+  { 50, 100, 150, 0 },
+  { 100, 150, 200, 0 },
+  { 150, 200, 230, 1 },
+  { 180, 220, 255, 1 },
+  { 180, 220, 255, 1 },
+  { 180, 220, 255, 1 },
+  { 180, 220, 255, 1 },
+  { 180, 220, 255, 1 },
+  { 180, 220, 255, 1 },
+  { 180, 220, 255, 1 },
+  { 180, 220, 255, 1 },
+  { 150, 200, 230, 1 },
+  { 100, 150, 200, 0 },
+  { 50, 100, 150, 0 },
+  { 0, 50, 90, 0 },
+  { 0, 0, 50, 0 },
+  { 0, 0, 20, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 0, 0 },
+  { 0, 0, 20, 0 },
+  { 0, 0, 50, 0 },
+  { 0, 50, 90, 0 }
+};
+
+static void
+display(void)
+{
+
+  const unsigned* rgb_back = t_background[ ((t - t0) / t_cycle) % t_bgswitch ];
+
+  /* clear viewport to black */
+  //PL_clear_vp(0, 0, 0);
+  //PL_clear_vp(255, 255, 255); /* white background for fade to white */
+  //PL_clear_vp(180, 220, 255); /* background for fade to light blue */
+  PL_clear_vp(rgb_back[ 0 ], rgb_back[ 1 ], rgb_back[ 2 ]); /* background dynamic */
+
+  if (rgb_back[ 3 ]) {
+    set_fade_to_white(1);
+  } else {
+    set_fade_to_white(0);
+  }
+
+  PL_polygon_count = 0;
+    
+  /* define camera orientation */
+  PL_set_camera(x, y, z, camrx, camry);
+
+#ifdef _SCAPE
+  {
+    int xx = x / CUSZ; if (x < 0) { --xx; }
+    int zz = z / CUSZ; if (z < 0) { --zz; }
+    struct pillar pillar;
+    for (int i = xx - (FIELD_SIZE/2); i < xx + (FIELD_SIZE/2); i++) {
+      for (int j = zz - (FIELD_SIZE/2); j < zz + (FIELD_SIZE/2); j++) {
+        { /* floortile */
+          PL_mst_push();
+          PL_mst_translate(i * CUSZ, CUSZ/2, j * CUSZ);
+          PL_render_object(floortile);
+          PL_mst_pop();
+        }
+        pillar_get(i, j, &pillar);
+        for (unsigned k = 0; k < pillar.height; k++) {
+          struct PL_OBJ* obj = NULL;
+          switch (pillar.block[ k ]) {
+          case 1: obj = bluecube; break; //rock2cube; break; //bluecube; break;
+          case 2: obj = redcube; break; //groundcube; break; //redcube; break;
+          case 3: obj = yellowcube; break; //woodcube; break; //yellowcube; break;
+          case 4: obj = greencube; break; //rockcube; break; //greencube; break;
+          default: goto BREAKPILLAR;
+          }
+          if (obj)
+          { /* draw textured cube */
+            PL_mst_push();
+            PL_mst_translate(i * CUSZ + (CUSZ/2), (k+1) * CUSZ + (CUSZ/2), j * CUSZ + (CUSZ/2));
+            PL_render_object(obj);
+            PL_mst_pop();
+          }
+        }
+BREAKPILLAR: ;
+      }
+    }
+  }
+#endif // _SCAPE
+
+  if (showtext)
+  {
+    char buf[ 1024 ];
+    snprintf(buf, sizeof(buf), "X:%d, Y:%d, Z:%d", x, y, z);
+    text_object_set_text(coords, buf);
+    snprintf(
+      buf, sizeof(buf),
+      "D:%d, B:%d, S:%d"
+      , (camry % 256) * 90 / 64
+      , (camrx % 256) * 90 / 64
+      , MOVSPD
+    );
+    text_object_set_text(compass, buf);
+  }
+
+  if (clk_sample() > fpsclock) {
+    fps = sys_getfps();
+    fpsclock = clk_sample() + 1000;
+    printf("FPS: %d, x: %d, y: %d, z: %d, s: %d\n", fps, x, y, z, sleepytime);
+    if (fps > 50) {
+      ++sleepytime;
+    } else if (fps < 40 && sleepytime > 0) {
+      --sleepytime;
+    }
+    t = time(0);
+  }
+/*
+  if (sleepytime) {
+    usleep(sleepytime);
+  }
+*/
+
+  botlist_iterate(&botlist, botlist_draw_bot, bluecube);
+
+  {
+    unsigned h, m;
+    world_get_stats(&h, &m);
+    fprintf(stderr, "Cache hits %u misses %u\n", h, m);
+  }
+
+  ++clicks;
+
+  /* update window and sync */
+  vid_blit();
+  vid_sync();
+}
+
+int
+main
+  (int argc, char **argv)
+{
+  t0 = t = time(0);
+
+    if (argc != 1) {
+        printf("note: %s does not take any arguments.\n", argv[0]);
+    }
+    
+    sys_init();
+    sys_updatefunc(update);
+    sys_displayfunc(display);
+
+    clk_mode(FW_CLK_MODE_HIRES);
+    pkb_reset();
+    sys_sethz(70);
+    sys_capfps(0);
+
+    if (vid_open("PL", VW, VH, 1, FW_VFLAG_VIDFAST) != FW_VERR_OK) {
+        FW_error("unable to create window\n");
+        return 1;
+    }
+
+    /* give the video memory to PL */
+    PL_init(vid_getinfo()->video, VW, VH);
+
+pillar_init();
+    
+    init();
+    sys_start();
+
+    sys_shutdown();
+    return 0;
+}

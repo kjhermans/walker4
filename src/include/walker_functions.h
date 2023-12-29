@@ -38,7 +38,7 @@ void flyer_draw
 /* declared in ./src/lib//flyers.c */
 extern
 void flyers_draw
-  (wworld_t* w, pt2d_t relative);
+  (wworld_t* w, pt2d_t relative, vec2d_t* vision);
 
 /* declared in ./src/lib//fnv.c */
 extern

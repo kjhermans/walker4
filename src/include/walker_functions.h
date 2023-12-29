@@ -387,6 +387,11 @@ void walker_set_windowsize
 
 /* declared in ./src/lib//walker.c */
 extern
+void PL_OBJ_debug
+  (struct PL_OBJ* obj);
+
+/* declared in ./src/lib//walker.c */
+extern
 void walker_show
   (walker_t* w, int argc, char* argv[]);
 

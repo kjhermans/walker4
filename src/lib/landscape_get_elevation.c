@@ -79,94 +79,94 @@ int landscape_triangle_elevation
 
  */
 void landscape_get_elevation
-  (wlandscape_t* ls, int px, int pz, wground_t* ground)
+  (wlandscape_t* ls, wobject_t* o, wground_t* ground)
 {
-  int tx, tz;
+  int tx = o->tile.x, tz = o->tile.z;
   wtile_t tile = { 0 };
 
-  landscape_pos2tile(px, pz, &tx, &tz);
-  landscape_tile_get(ls, tx, tz, &tile);
-  if (tile.elevation[ 0 ]) { // optimized tile, with known edge elevations
-    int tpx = px - (tx * WTILESIZE);
-    int tpz = pz - (tz * WTILESIZE);
-
-    if (tpx < WTILESIZE / 2) {
-      if (tpz < WTILESIZE / 2) {
-        if (tpx > tpz) { // triangle 0
-          ground->elevation = landscape_triangle_elevation(
-            0, tile.elevation[ 0 ], 0,
-            WTILESIZE / 2, tile.elevation[ 1 ], 0,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
-        } else { // triangle 7
-          ground->elevation = landscape_triangle_elevation(
-            0, tile.elevation[ 0 ], 0,
-            0, tile.elevation[ 7 ], WTILESIZE / 2,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
+  if (landscape_tile_get_cache(ls, tx, tz, &tile) == 0) {
+    if (tile.elevation[ 0 ]) { // optimized tile, with known edge elevations
+      int tpx = o->position.x - (tx * WTILESIZE);
+      int tpz = o->position.z - (tz * WTILESIZE);
+  
+      if (tpx < WTILESIZE / 2) {
+        if (tpz < WTILESIZE / 2) {
+          if (tpx > tpz) { // triangle 0
+            ground->elevation = landscape_triangle_elevation(
+              0, tile.elevation[ 0 ], 0,
+              WTILESIZE / 2, tile.elevation[ 1 ], 0,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          } else { // triangle 7
+            ground->elevation = landscape_triangle_elevation(
+              0, tile.elevation[ 0 ], 0,
+              0, tile.elevation[ 7 ], WTILESIZE / 2,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          }
+        } else {
+          if (WTILESIZE - tpz > tpx) { // triangle 5
+            ground->elevation = landscape_triangle_elevation(
+              0, tile.elevation[ 0 ], WTILESIZE,
+              WTILESIZE / 2, tile.elevation[ 7 ], WTILESIZE,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          } else { // triangle 6
+            ground->elevation = landscape_triangle_elevation(
+              0, tile.elevation[ 0 ], WTILESIZE / 2,
+              0, tile.elevation[ 7 ], WTILESIZE,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          }
         }
       } else {
-        if (WTILESIZE - tpz > tpx) { // triangle 5
-          ground->elevation = landscape_triangle_elevation(
-            0, tile.elevation[ 0 ], WTILESIZE,
-            WTILESIZE / 2, tile.elevation[ 7 ], WTILESIZE,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
-        } else { // triangle 6
-          ground->elevation = landscape_triangle_elevation(
-            0, tile.elevation[ 0 ], WTILESIZE / 2,
-            0, tile.elevation[ 7 ], WTILESIZE,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
-        }
-      }
-    } else {
-      if (tpz < WTILESIZE / 2) {
-        if (WTILESIZE - tpx < tpz) { // triangle 1
-          ground->elevation = landscape_triangle_elevation(
-            WTILESIZE / 2, tile.elevation[ 0 ], 0,
-            WTILESIZE, tile.elevation[ 7 ], 0,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
-        } else { // triangle 2
-          ground->elevation = landscape_triangle_elevation(
-            WTILESIZE, tile.elevation[ 0 ], 0,
-            WTILESIZE, tile.elevation[ 7 ], WTILESIZE / 2,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
-        }
-      } else { 
-        if (tpx > tpz) { // triangle 3
-          ground->elevation = landscape_triangle_elevation(
-            WTILESIZE, tile.elevation[ 0 ], WTILESIZE / 2,
-            WTILESIZE, tile.elevation[ 7 ], WTILESIZE,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
-        } else { // triangle 4
-          ground->elevation = landscape_triangle_elevation(
-            WTILESIZE, tile.elevation[ 0 ], WTILESIZE,
-            WTILESIZE / 2, tile.elevation[ 7 ], WTILESIZE,
-            WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
-            tpx, tpz
-          );
-          return;
+        if (tpz < WTILESIZE / 2) {
+          if (WTILESIZE - tpx < tpz) { // triangle 1
+            ground->elevation = landscape_triangle_elevation(
+              WTILESIZE / 2, tile.elevation[ 0 ], 0,
+              WTILESIZE, tile.elevation[ 7 ], 0,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          } else { // triangle 2
+            ground->elevation = landscape_triangle_elevation(
+              WTILESIZE, tile.elevation[ 0 ], 0,
+              WTILESIZE, tile.elevation[ 7 ], WTILESIZE / 2,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          }
+        } else { 
+          if (tpx > tpz) { // triangle 3
+            ground->elevation = landscape_triangle_elevation(
+              WTILESIZE, tile.elevation[ 0 ], WTILESIZE / 2,
+              WTILESIZE, tile.elevation[ 7 ], WTILESIZE,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          } else { // triangle 4
+            ground->elevation = landscape_triangle_elevation(
+              WTILESIZE, tile.elevation[ 0 ], WTILESIZE,
+              WTILESIZE / 2, tile.elevation[ 7 ], WTILESIZE,
+              WTILESIZE / 2, tile.elevation[ 4 ], WTILESIZE / 2,
+              tpx, tpz
+            );
+            return;
+          }
         }
       }
     }
+    ground->elevation = tile.elevation[ 4 ];
   }
-  ground->elevation = tile.elevation[ 4 ];
 }

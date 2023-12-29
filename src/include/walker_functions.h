@@ -85,7 +85,7 @@ int landscape_td_get
 /* declared in ./src/lib//landscape_get_elevation.c */
 extern
 void landscape_get_elevation
-  (wlandscape_t* ls, int px, int pz, wground_t* ground);
+  (wlandscape_t* ls, wobject_t* o, wground_t* ground);
 
 /* declared in ./src/lib//landscape_pos2tile.c */
 extern

@@ -285,6 +285,54 @@ void display
           PL_mst_pop();
         }
       }
+
+      if (tile.elevation[ 4 ] < 512) {
+        struct PL_POLY waterpoly = {
+          .n_verts = 5,
+          .verts[ 0 ] = 0,
+          .verts[ 1 ] = 0,
+          .verts[ 2 ] = 0,
+          .verts[ 3 ] = 3,
+          .verts[ 4 ] = 0,
+          .verts[ 5 ] = 0,
+          .verts[ 6 ] = 2,
+          .verts[ 7 ] = 0,
+          .verts[ 8 ] = 0,
+          .verts[ 9 ] = 1,
+          .verts[ 10 ] = 0,
+          .verts[ 11 ] = 0,
+          .verts[ 12 ] = 0,
+          .verts[ 13 ] = 0,
+          .verts[ 14 ] = 0,
+          .color = 0xff0000ff
+        };
+        int waterverts[] = {
+          0, 512, 0, 0,
+          WTILESIZE, 512, 0, 0,
+          WTILESIZE, 512, WTILESIZE, 0,
+          0, 512, WTILESIZE, 0
+        };
+        struct PL_OBJ waterobj = {
+          .verts = waterverts,
+          .n_verts = 4,
+          .polys = &waterpoly,
+          .n_polys = 1
+        };
+        int x = tx * WTILESIZE;
+        int y = 0; //tile.elevation * WTILESIZE;
+        int z = tz * WTILESIZE;
+#ifndef _PL_ABSOLUTE
+        x -= wglobal->world.player.object.position.x;
+        z -= wglobal->world.player.object.position.z;
+#endif
+        {
+          PL_mst_push();
+          PL_mst_translate(x, y, z);
+          PL_render_object(&waterobj);
+          PL_mst_pop();
+        }
+      }
+
     }
   }
 

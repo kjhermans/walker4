@@ -84,6 +84,13 @@ pt2d_t;
 
 typedef struct
 {
+  pt2d_t                    o;
+  pt2d_t                    d;
+}
+vec2d_t;
+
+typedef struct
+{
   int                       x;
   int                       y;
   int                       z;

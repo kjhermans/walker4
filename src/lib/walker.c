@@ -214,17 +214,11 @@ void display
   );
 
   /* retrieve field of vision */
-  int txmin, txmax, tzmin, tzmax;
-  object_get_vision(
-    &(wglobal->world.player.object),
-    &txmin,
-    &txmax,
-    &tzmin,
-    &tzmax
-  );
+  vec2d_t vision;
+  object_get_vision( &(wglobal->world.player.object), &vision);
 
-  for (int tx = txmin; tx < txmax; tx++) {
-    for (int tz = tzmin; tz < tzmax; tz++) {
+  for (int tx = vision.o.x; tx < vision.d.x; tx++) {
+    for (int tz = vision.o.z; tz < vision.d.z; tz++) {
       wtile_t tile;
       landscape_tile_get(&(wglobal->world.landscape), tx, tz, &tile);
       int tr[ 8 ][ 3 ][ 3 ];

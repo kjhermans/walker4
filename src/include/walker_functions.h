@@ -228,7 +228,7 @@ void object_get_tile
 /* declared in ./src/lib//object.c */
 extern
 void object_get_vision
-  (wobject_t* o, int* txmin, int* txmax, int* tzmin, int* tzmax);
+  (wobject_t* o, vec2d_t* vision);
 
 /* declared in ./src/lib//object.c */
 extern

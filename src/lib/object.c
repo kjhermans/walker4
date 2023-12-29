@@ -214,15 +214,15 @@ void object_get_tile
 }
 
 void object_get_vision
-  (wobject_t* o, int* txmin, int* txmax, int* tzmin, int* tzmax)
+  (wobject_t* o, vec2d_t* vision)
 {
   int tx, tz;
 
-  object_get_tile(o, NULL, &tx, &tz);
-  (*txmin) = tx - (VISION / 2);
-  (*txmax) = tx + (VISION / 2);
-  (*tzmin) = tz - (VISION / 2);
-  (*tzmax) = tz + (VISION / 2);
+  landscape_pos2tile(o->position.x, o->position.z, &tx, &tz);
+  vision->o.x = tx - (VISION / 2);
+  vision->d.x = tx + (VISION / 2);
+  vision->o.z = tz - (VISION / 2);
+  vision->d.z = tz + (VISION / 2);
 }
 
 void object_debug

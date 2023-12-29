@@ -222,11 +222,6 @@ int object_move
 
 /* declared in ./src/lib//object.c */
 extern
-void object_get_tile
-  (wobject_t* o, wtile_t* tile, int* tx, int* tz);
-
-/* declared in ./src/lib//object.c */
-extern
 void object_get_vision
   (wobject_t* o, vec2d_t* vision);
 

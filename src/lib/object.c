@@ -205,16 +205,6 @@ int object_move
   }
 }
 
-void object_get_tile
-  (wobject_t* o, wtile_t* tile, int* tx, int* tz)
-{
-  if (tile) {
-//..
-  }
-  (*tx) = o->position.x / WTILESIZE;
-  (*tz) = o->position.z / WTILESIZE;
-}
-
 void object_get_vision
   (wobject_t* o, vec2d_t* vision)
 {

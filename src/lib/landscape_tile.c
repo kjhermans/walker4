@@ -132,13 +132,19 @@ if ((a - pa) == 0) { goto NOCHASM; }
 #ifdef _DEBUG
 fprintf(stderr, "depth %d * %f * 64 = %d\n", chasmness, dchasm, de);
 #endif
-    if (de > 512) {
+/*
+    if (de > 512 && ) {
       tile->hardness = 2;
     }
+*/
     if (de > tile->elevation[ 4 ]) {
       tile->elevation[ 4 ] = 64;
+      tile->hardness = 2;
     } else {
       tile->elevation[ 4 ] -= de;
+      if (de > 512 && tile->elevation[ 4 ] < 512) {
+        tile->hardness = 2;
+      }
     }
 NOCHASM:
   }

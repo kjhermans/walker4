@@ -190,6 +190,7 @@ wquadrant_t;
 #define WTOPIC_ELEVATION    2
 #define WTOPIC_QELEVATION   3
 #define WTOPIC_HILLS        4
+#define WTOPIC_CHASM        5
 
 typedef struct
 {

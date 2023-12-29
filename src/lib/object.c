@@ -159,12 +159,14 @@ int object_move
 #endif
 
   /* checking whether on solid ground */
-  o->ground.supported = 0;
-  landscape_get_elevation(ls, o->position.x, o->position.z, &(o->ground));
-  if (o->position.y <= o->ground.elevation + 64) {
-    o->position.y = o->ground.elevation + 64;
-    o->ground.supported = 1;
-  }
+//  if (o->speed_hor) {
+    o->ground.supported = 0;
+    landscape_get_elevation(ls, o, &(o->ground));
+    if (o->position.y <= o->ground.elevation + 64) {
+      o->position.y = o->ground.elevation + 64;
+      o->ground.supported = 1;
+    }
+//  }
 
   if (WPOS_XMIN && o->position.x < WPOS_XMIN) {
     o->position.x = WPOS_XMIN;

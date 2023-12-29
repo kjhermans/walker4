@@ -134,7 +134,6 @@ int object_move
 {
   pt3d_t pt = o->position;
 
-#ifdef _USE_PL
   int camry = (int)(o->oxz / PL_RAD256);
   int camrx = (int)(o->oyz / PL_RAD256);
   o->position.x += (o->speed_hor * PL_sin[camry & PL_TRIGMSK]) >> PL_P;
@@ -144,19 +143,6 @@ int object_move
   } else {
     o->position.y += o->speed_vert;
   }
-
-#elif defined _USE_GL
-  if (o->speed_hor) {
-    o->position.x += (o->speed_hor * -sin(o->oxz));
-    o->position.z += (o->speed_hor * cos(o->oxz));
-  }
-  if (o->flying) {
-    o->position.y += -(o->speed_hor * sin(o->oyz));
-  } else {
-    o->position.y += o->speed_vert;
-  }
-
-#endif
 
   /* checking whether on solid ground */
 //  if (o->speed_hor) {

@@ -150,9 +150,6 @@ static unsigned colors[] = WCOLORS;
 static unsigned colors_hard[] = WCOLORS_HARD;
 static unsigned colors_chasm[] = WCOLORS_CHASM;
 
-#ifdef _USE_PL
-/*
-static
 void PL_OBJ_debug
   (struct PL_OBJ* obj)
 {
@@ -174,7 +171,6 @@ void PL_OBJ_debug
     }
   }
 }
-*/
 
 static
 void update
@@ -203,15 +199,9 @@ void display
     
   /* define camera orientation */
   PL_set_camera(
-#ifdef _PL_ABSOLUTE
-    wglobal->world.player.object.position.x,
-    wglobal->world.player.object.position.y,
-    wglobal->world.player.object.position.z,
-#else
     0,
     wglobal->world.player.object.position.y,
     0,
-#endif
     (int)(wglobal->world.player.object.oyz / PL_RAD256),
     (int)(wglobal->world.player.object.oxz / PL_RAD256)
   );
@@ -274,10 +264,8 @@ void display
         int x = tx * WTILESIZE;
         int y = 0; //tile.elevation * WTILESIZE;
         int z = tz * WTILESIZE;
-#ifndef _PL_ABSOLUTE
         x -= wglobal->world.player.object.position.x;
         z -= wglobal->world.player.object.position.z;
-#endif
         {
           PL_mst_push();
           PL_mst_translate(x, y, z);
@@ -286,7 +274,7 @@ void display
         }
       }
 
-      if (tile.elevation[ 4 ] < 512) {
+      if (tile.elevation[ 4 ] < 600) {
         struct PL_POLY waterpoly = {
           .n_verts = 5,
           .verts[ 0 ] = 0,
@@ -321,10 +309,8 @@ void display
         int x = tx * WTILESIZE;
         int y = 0; //tile.elevation * WTILESIZE;
         int z = tz * WTILESIZE;
-#ifndef _PL_ABSOLUTE
         x -= wglobal->world.player.object.position.x;
         z -= wglobal->world.player.object.position.z;
-#endif
         {
           PL_mst_push();
           PL_mst_translate(x, y, z);
@@ -362,227 +348,6 @@ void display
   vid_blit();
   vid_sync();
 }
-#endif // _USE_PL
-
-#ifdef _USE_GL
-
-static unsigned char keypress[ 256 ] = { 0 };
-static unsigned char specialkeypress[ 4 ] = { 0 };
-static int keypressed = 0;
-static int specialkeypressed = 0;
-
-static
-void keyboard
-  (unsigned char key, int x, int y)
-{
-  //player_handle_keys(&(wglobal->world.player), wglobal, (int)key);
-  keypress[ key ] = 1;
-  keypressed = 1;
-}
-
-static
-void keyboard_s
-  (int key, int x, int y)
-{
-  //player_handle_keys(&(wglobal->world.player), wglobal, key);
-  switch (key) {
-  case GLUT_KEY_LEFT:  specialkeypress[ 0 ] = 1; break;
-  case GLUT_KEY_RIGHT: specialkeypress[ 1 ] = 1; break;
-  case GLUT_KEY_UP:    specialkeypress[ 2 ] = 1; break;
-  case GLUT_KEY_DOWN:  specialkeypress[ 3 ] = 1; break;
-  }
-  specialkeypressed = 1;
-}
-
-static
-void keyboard_up
-  (unsigned char key, int x, int y)
-{
-  //player_handle_keys(&(wglobal->world.player), wglobal, (int)key);
-  keypress[ key ] = 0;
-  keypressed = 0;
-  for (unsigned i=0; i < 256; i++) {
-    if (keypress[ i ]) {
-      keypressed = 1;
-    }
-  }
-}
-
-static
-void keyboard_s_up
-  (int key, int x, int y)
-{
-  //player_handle_keys(&(wglobal->world.player), wglobal, key);
-  switch (key) {
-  case GLUT_KEY_LEFT:  specialkeypress[ 0 ] = 0; break;
-  case GLUT_KEY_RIGHT: specialkeypress[ 1 ] = 0; break;
-  case GLUT_KEY_UP:    specialkeypress[ 2 ] = 0; break;
-  case GLUT_KEY_DOWN:  specialkeypress[ 3 ] = 0; break;
-  }
-  if (!specialkeypress[ 0 ] 
-      && !specialkeypress[ 1 ] 
-      && !specialkeypress[ 2 ] 
-      && !specialkeypress[ 3 ])
-  {
-    specialkeypressed = 0;
-  }
-}
-
-static
-void update_key
-  ()
-{
-  if (keypressed) {
-    for (unsigned i=0; i < 256; i++) {
-      if (keypress[ i ]) {
-        player_handle_keys(&(wglobal->world.player), wglobal, i);
-      }
-    }
-  }
-  if (specialkeypressed) {
-    if (specialkeypress[ 0 ]) {
-      player_handle_keys(&(wglobal->world.player), wglobal, GLUT_KEY_LEFT);
-    }
-    if (specialkeypress[ 1 ]) {
-      player_handle_keys(&(wglobal->world.player), wglobal, GLUT_KEY_RIGHT);
-    }
-    if (specialkeypress[ 2 ]) {
-      player_handle_keys(&(wglobal->world.player), wglobal, GLUT_KEY_UP);
-    }
-    if (specialkeypress[ 3 ]) {
-      player_handle_keys(&(wglobal->world.player), wglobal, GLUT_KEY_DOWN);
-    }
-  }
-}
-
-#define SCALE 16
-
-static
-void display_tile
-  (int tx, int tz)
-{
-  wtile_t tile;
-  uint32_t c;
-  float r, g, b;
-  int tr[ 8 ][ 3 ][ 3 ];
-
-  landscape_tile_get(&(wglobal->world.landscape), tx, tz, &tile);
-  c = colors[ tile.color ];
-  if (tile.hardness == 3) {
-    c = colors_hard[ tile.color ];
-  }
-  r = ( (float)((c>>16)&0xff)/256);
-  g = ( (float)((c>>8)&0xff)/256);
-  b = ( (float)((c)&0xff)/256);
-  landscape_tile_get_triangles(&(wglobal->world.landscape), tx, tz, tr);
-  for (int i=0; i < 8; i++) {
-    float v[ 9 ] = {
-      (tx*WTILESIZE) + tr[i][2][0], tr[i][2][1], (tz*WTILESIZE) + tr[i][2][2],
-      (tx*WTILESIZE) + tr[i][1][0], tr[i][1][1], (tz*WTILESIZE) + tr[i][1][2],
-      (tx*WTILESIZE) + tr[i][0][0], tr[i][0][1], (tz*WTILESIZE) + tr[i][0][2]
-    };
-    glBegin(GL_TRIANGLES);
-    glColor3f(r, g, b);
-    glVertex3f(v[ 0 ] / SCALE, v[ 1 ] / SCALE, v[ 2 ] / SCALE);
-    glVertex3f(v[ 3 ] / SCALE, v[ 4 ] / SCALE, v[ 5 ] / SCALE);
-    glVertex3f(v[ 6 ] / SCALE, v[ 7 ] / SCALE, v[ 8 ] / SCALE);
-    glEnd();
-  }
-}
-
-static
-void display
-  ()
-{
-  glLoadIdentity();
-
-  glRotatef(wglobal->world.player.object.oyz / WDEGRAD, 1, 0, 0);
-  glRotatef(wglobal->world.player.object.oxz / WDEGRAD, 0, 1, 0);
-
-  glTranslatef(
-    ((float)wglobal->world.player.object.position.x) / SCALE,
-    -((((float)wglobal->world.player.object.position.y) / SCALE) + 16),
-    ((float)wglobal->world.player.object.position.z) / SCALE
-  );
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  /* retrieve field of vision */
-  int txmin, txmax, tzmin, tzmax;
-  object_get_vision(
-    &(wglobal->world.player.object),
-    &txmin,
-    &txmax,
-    &tzmin,
-    &tzmax
-  );
-
-  for (int tx = txmin; tx < txmax; tx++) {
-    for (int tz = tzmin; tz < tzmax; tz++) {
-      display_tile(tx, tz);
-    }
-  }
-
-  glutSwapBuffers();
-}
-
-/*
-static
-void mouse
-  (int button, int state, int x, int y)
-{
-}
-
-static
-void motion
-  (int x, int y)
-{
-}
-*/
-
-static
-void* update
-  (void* arg)
-{
-  (void)arg;
-
-  while (1) {
-    usleep(25000);
-    t = time(0);
-    if (wglobal == 0) {
-      continue;
-    }
-    if (tlast < t) {
-      int tx, tz, qx, qz;
-    
-      landscape_pos2tile(
-        wglobal->world.player.object.position.x,
-        wglobal->world.player.object.position.z,
-        &tx, &tz
-      );
-      landscape_tile2quadrant(tx, tz, &qx, &qz, 0, 0);
-      snprintf(statsbuffer, sizeof(statsbuffer)
-        , "px:%d, pz:%d, py:%d, tx:%d, tz:%d, qx:%d, qz:%d, "
-          "oxz:%d, oyz:%d, spd:%d, fll:%d"
-        , wglobal->world.player.object.position.x
-        , wglobal->world.player.object.position.z
-        , wglobal->world.player.object.position.y
-        , tx, tz, qx, qz
-        , (int)(wglobal->world.player.object.oxz / WDEGRAD)
-        , (int)(wglobal->world.player.object.oyz / WDEGRAD)
-        , wglobal->world.player.object.speed_hor
-        , wglobal->world.player.object.speed_vert
-      );
-      fprintf(stderr, "Walker::Display %s\n", statsbuffer);
-      tlast = t;
-    }
-
-    update_key();
-    player_update(&(wglobal->world.player), &(wglobal->world.landscape));
-  }
-  return NULL;
-}
-#endif
 
 /**
  *
@@ -592,7 +357,6 @@ void walker_show
 {
   fprintf(stderr, "Walker::show\n");
 
-#ifdef _USE_PL
   (void)argc;
   (void)argv;
   sys_init();
@@ -614,57 +378,6 @@ void walker_show
 
   /* give the video memory to PL */
   PL_init(vid_getinfo()->video, w->display.width, w->display.height);
-
-#elif defined _USE_GL
-  glutInit(&argc, argv);
-//  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB );
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowPosition(80, 80);
-  glutInitWindowSize(WDISPLAY_DEFAULT_WIDTH, WDISPLAY_DEFAULT_HEIGHT);
-  glutCreateWindow("Walker");
-  glutDisplayFunc(display);
-  glutKeyboardFunc(keyboard);
-  glutKeyboardUpFunc(keyboard_up);
-  glutSpecialFunc(keyboard_s);
-  glutSpecialUpFunc(keyboard_s_up);
-  glutIgnoreKeyRepeat(1);
-//  glutMouseFunc(mouse);
-//  glutMotionFunc(motion);
-  glEnable(GL_CULL_FACE);
-  glEnable(GL_DEPTH_TEST);
-  // Set the current clear color to sky blue and the current drawing color to
-  // white.
-  glClearColor(0.1, 0.39, 0.88, 1.0);
-  glColor3f(1.0, 1.0, 1.0);
-
-  // Tell the rendering engine not to draw backfaces.  Without this code,
-  // all four faces of the tetrahedron would be drawn and it is possible
-  // that faces farther away could be drawn after nearer to the viewer.
-  // Since there is only one closed polyhedron in the whole scene,
-  // eliminating the drawing of backfaces gives us the realism we need.
-  // THIS DOES NOT WORK IN GENERAL.
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-
-  // Set the camera lens so that we have a perspective viewing volume whose
-  // horizontal bounds at the near clipping plane are -2..2 and vertical
-  // bounds are -1.5..1.5.  The near clipping plane is 1 unit from the camera
-  // and the far clipping plane is 40 units away.
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glFrustum(-2, 2, -1.5, 1.5, 1, 320);
-//  glFrustum(-2, 2, -1.5, 1.5, 1, 40);
-  //glFrustum(-200, 200, -150, 150, 1, 4000);
-
-  // Set up transforms so that the tetrahedron which is defined right at
-  // the origin will be rotated and moved into the view volume.  First we
-  // rotate 70 degrees around y so we can see a lot of the left side.
-  // Then we rotate 50 degrees around x to "drop" the top of the pyramid
-  // down a bit.  Then we move the object back 3 units "into the screen".
-  glMatrixMode(GL_MODELVIEW);
-//  glLoadIdentity();
-
-#endif
 }
 
 /**
@@ -676,11 +389,7 @@ void walker_run
   fprintf(stderr, "Walker::run\n");
   wglobal = w;
 
-#ifdef _USE_PL
   sys_start();
-#elif defined _USE_GL
-  glutMainLoop();
-#endif
 }
 
 /**
@@ -689,15 +398,7 @@ void walker_run
 void walker_init
   (walker_t* w, unsigned* optseed)
 {
-#ifdef _USE_PL
   fprintf(stderr, "Walker::init (PL); press 'h' for help\n");
-#elif defined _USE_GL
-  pthread_t t;
-fprintf(stderr, "Creating thread.\n");
-  pthread_create(&t, 0, update, 0);
-  fprintf(stderr, "Walker::init (OpenGL); press 'h' for help\n");
-#endif
-  fprintf(stderr, "Walker::init\n");
   memset(w, 0, sizeof(*w));
   landscape_init(&(w->world.landscape), optseed);
   w->display.width = WDISPLAY_DEFAULT_WIDTH;

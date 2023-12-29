@@ -62,7 +62,6 @@ int vertices[] = {
    FPAUSE,  FPAUSE,  FWIDTH, 0,
 };
 
-#ifdef _USE_PL
 struct PL_POLY polys[] = {
   {
     .n_verts = 4,
@@ -201,7 +200,6 @@ struct PL_OBJ obj = {
   .polys = polys,
   .n_polys = 8
 };
-#endif
 
 void flyers_init
   (wworld_t* w)
@@ -256,7 +254,6 @@ void flyers_update
 void flyer_draw
   (wflyer_t* f, int x, int z)
 {
-#ifdef _USE_PL
   if (f->object.visible) {
     PL_mst_push();
     PL_mst_translate(x, f->object.position.y, z);
@@ -265,7 +262,6 @@ void flyer_draw
     PL_render_object(&obj);
     PL_mst_pop();
   }
-#endif
 }
 
 void flyers_draw

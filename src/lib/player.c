@@ -41,7 +41,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void player_handle_keys
   (wplayer_t* p, walker_t* w, int key)
 {
-#ifdef _USE_PL
   (void)key;
 
   if (pkb_key_pressed(FW_KEY_ESCAPE)) {
@@ -88,46 +87,6 @@ void player_handle_keys
       p->object.speed_vert = PLAYER_JUMPSPEED;
     }
   }
-#endif
-
-#ifdef _USE_GL
-  if (key == 27) {
-    fprintf(stderr, "Walker::Shutdown\n");
-    exit(0);
-  } else if (key == GLUT_KEY_LEFT) {
-    object_turnleft(&(p->object), PLAYER_TURNRATE);
-  } else if (key == GLUT_KEY_RIGHT) {
-    object_turnright(&(p->object), PLAYER_TURNRATE);
-  } else if (key == GLUT_KEY_UP) {
-    if (p->object.flying) {
-      object_turndown(&(p->object), PLAYER_TURNRATE);
-    } else {
-      object_turnup(&(p->object), PLAYER_TURNRATE);
-    }
-  } else if (key == GLUT_KEY_DOWN) {
-    if (p->object.flying) {
-      object_turnup(&(p->object), PLAYER_TURNRATE);
-    } else {
-      object_turndown(&(p->object), PLAYER_TURNRATE);
-    }
-  } else if (key == w->config.keybindings.forward) {
-    object_forward(&(p->object));
-  } else if (key == w->config.keybindings.backward) {
-    object_backward(&(p->object));
-#ifdef _DEBUG
-  } else if (key == 'b') {
-    p->object.speed_hor = 0;
-  } else if (key == 'a') {
-    p->object.flying = !(p->object.flying);
-#endif
-  }
-  if (key == w->config.keybindings.jump) {
-    if (p->object.supported) {
-      p->object.speed_vert = PLAYER_JUMPSPEED;
-    }
-  }
-  glutPostRedisplay();
-#endif
 }
 
 void player_flying
@@ -170,10 +129,6 @@ void player_update
   m = object_move(&(p->object), ls);
   object_gravity(&(p->object));
   object_friction(&(p->object));
-
-#ifdef _USE_GL
-  if (m) { glutPostRedisplay(); }
-#endif
 
   if (m) {
     if (q.x != p->object.quadrant.x || q.z != p->object.quadrant.z) {

@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+my ($url, $dir, $patch, $cmd) = (@ARGV);
+
+if (-d $dir) {
+  printf STDERR "Found dependency $dir in place.\n";
+  exit 0;
+}
+
+`git clone $url`;
+
+if ($patch) {
+  printf STDERR "Applying patch $patch.\n";
+  `cd $dir && patch -p1 < ../$patch`
+}
+
+if ($cmd) {
+  print STDERR "Executing command '$cmd'.\n";
+  `cd $dir && $cmd`;
+}
+
+1;

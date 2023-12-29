@@ -34,7 +34,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _WALKER_H_
 #define _WALKER_H_
 
-#include <btree/td.h>
+#include <pl.h>
+#include <fw/fw.h>
+#include <sdbm_tree/td.h>
 #include <inttypes.h>
 
 #define WPI 3.141592
@@ -44,24 +46,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * You can choose to have PL or openGL for 3D graphics
  */
 
-#ifdef _USE_PL
-
-  #include <fw.h>
-  #include <pl.h>
-  #define PL_RAD256 (WPI / 128)
-
-#elif defined _USE_GL
-
-  #ifdef __APPLE_CC__
-    #include <GLUT/glut.h>
-  #else
-    #include <GL/glut.h>
-  #endif
-  #include <pthread.h>
-  #include <unistd.h>
-  #include <math.h>
-
-#endif
+#define PL_RAD256 (WPI / 128)
 
 #define GRAVITY             2
 #define TERMINALVELOCITY    -64

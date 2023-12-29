@@ -1,12 +1,5 @@
 all: funcheaders
-	cd src/pishili && make
-	cd src/lib && make LIB3D="-D_USE_PL"
-	cd src/main && make
-
-opengl: funcheaders
-	touch src/pishili/libpl.a
-	cd src/lib && make LIB3D="-D_USE_GL"
-	cd src/main && make 
+	cd src && make
 
 debug:	
 	make all DEBUG="-D_DEBUG=1"
@@ -24,7 +17,14 @@ clean:
 	    make -C $$DIR clean; \
 	  done
 
-archive: clean
+superclean: clean
+	@MFS=`find src/ -name Makefile | xargs grep -l 'superclean:'`; \
+	  for MF in $$MFS; do \
+	    DIR=`dirname $$MF`; \
+	    make -C $$DIR superclean; \
+	  done
+
+archive: superclean
 	RELEASE=$$(cat release); \
 	/bin/echo "  [TAR] ~/walker4-src-$$RELEASE.tar.gz"; \
 	cd .. && \

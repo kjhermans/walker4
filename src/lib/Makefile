@@ -2,7 +2,8 @@ OBJECTS:=$(shell ls *.c | sort | sed -e 's/\.c$$/.o/')
 LIB=libwalker.a
 CC=$(ARCH)gcc
 AR=$(ARCH)ar
-CFLAGS=-g -Wall -Wextra -I../include -I../pishili $(LIB3D) $(DEBUG)
+INCLIBS=-I../include -I../PL3D-KC -I../sdbm_tree
+CFLAGS=-g -Wall -Wextra -I../include $(INCLIBS) $(DEBUG)
 
 all: $(LIB)
 

@@ -194,9 +194,12 @@ void player_update
 void player_init
   (wplayer_t* p)
 {
+  p->object.position.x = WQUADRANT_DIMENSION * WTILESIZE / 2;
+  p->object.position.y = 4096;
+  p->object.position.z = WQUADRANT_DIMENSION * WTILESIZE / 2;
   p->flyer.object.visible = 1;
-  p->flyer.object.position.x = 1000;
-  p->flyer.object.position.y = 2000;
-  p->flyer.object.position.z = 1000;
+  p->flyer.object.position.x = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
+  p->flyer.object.position.y = 4096;
+  p->flyer.object.position.z = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
   p->flyer.object.flying = 0;
 }

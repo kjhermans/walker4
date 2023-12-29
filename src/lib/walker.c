@@ -146,6 +146,7 @@ void walker_set_windowsize
 
 static unsigned colors[] = WCOLORS;
 static unsigned colors_hard[] = WCOLORS_HARD;
+static unsigned colors_chasm[] = WCOLORS_CHASM;
 
 #ifdef _USE_PL
 /*
@@ -224,6 +225,23 @@ void display
       int tr[ 8 ][ 3 ][ 3 ];
       landscape_tile_get_triangles(&(wglobal->world.landscape), tx, tz, tr);
       for (int i=0; i < 8; i++) {
+        unsigned color;
+        switch (tile.hardness) {
+        case 2:
+          color = colors_chasm[ tile.color ];
+          break;
+        case 3:
+          color = colors_hard[ tile.color ];
+          break;
+        default:
+          color = colors[ tile.color ];
+          break;
+        }
+#ifdef _DEBUG
+        if (tx % WQUADRANT_DIMENSION == 0 || tz % WQUADRANT_DIMENSION == 0) {
+          color = 0xff0000;
+        }
+#endif
         struct PL_POLY poly = {
           .n_verts = 4,
           .verts[ 0 ] = 1,
@@ -238,8 +256,7 @@ void display
           .verts[ 9 ] = 1,
           .verts[ 10 ] = 0,
           .verts[ 11 ] = 0,
-          .color = (tile.hardness == 3)
-                    ? colors_hard[ tile.color ] : colors[ tile.color ]
+          .color = color
         };
         int _tr[ 12 ] = {
           tr[i][0][0], tr[i][0][1], tr[i][0][2], 0,

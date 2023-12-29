@@ -120,7 +120,8 @@ void walker_update
   flyers_update(&(wglobal->world));
   flyer_update(&(wglobal->world), &(wglobal->world.player.flyer));
   snprintf(statsbuffer, sizeof(statsbuffer)
-    , "px:%d, pz:%d, py:%d, tx:%d, tz:%d, qx:%d, qz:%d, oxz:%d, oyz:%d, spd:%d"
+    , "px:%d, pz:%d, py:%d, tx:%d, tz:%d, qx:%d, qz:%d, "
+      "oxz:%d, oyz:%d, spd:%d, fll: %d"
     , wglobal->world.player.object.position.x
     , wglobal->world.player.object.position.z
     , wglobal->world.player.object.position.y
@@ -128,6 +129,7 @@ void walker_update
     , (int)(wglobal->world.player.object.oxz / WDEGRAD)
     , (int)(wglobal->world.player.object.oyz / WDEGRAD)
     , wglobal->world.player.object.speed_hor
+    , wglobal->world.player.object.speed_vert
   );
   text_object_set_text(w->display.overlay.stats, statsbuffer);
   if (w->display.overlay.warn_timeout) {
@@ -512,7 +514,8 @@ void* update
       );
       landscape_tile2quadrant(tx, tz, &qx, &qz, 0, 0);
       snprintf(statsbuffer, sizeof(statsbuffer)
-        , "px:%d, pz:%d, py:%d, tx:%d, tz:%d, qx:%d, qz:%d, oxz:%d, oyz:%d, spd:%d"
+        , "px:%d, pz:%d, py:%d, tx:%d, tz:%d, qx:%d, qz:%d, "
+          "oxz:%d, oyz:%d, spd:%d, fll:%d"
         , wglobal->world.player.object.position.x
         , wglobal->world.player.object.position.z
         , wglobal->world.player.object.position.y
@@ -520,6 +523,7 @@ void* update
         , (int)(wglobal->world.player.object.oxz / WDEGRAD)
         , (int)(wglobal->world.player.object.oyz / WDEGRAD)
         , wglobal->world.player.object.speed_hor
+        , wglobal->world.player.object.speed_vert
       );
       fprintf(stderr, "Walker::Display %s\n", statsbuffer);
       tlast = t;

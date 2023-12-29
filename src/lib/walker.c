@@ -291,7 +291,8 @@ void display
     (pt2d_t){
       .x = wglobal->world.player.object.position.x,
       .z = wglobal->world.player.object.position.z
-    }
+    },
+    &vision
   );
   flyer_draw(
     &(wglobal->world.player.flyer),

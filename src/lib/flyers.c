@@ -257,8 +257,7 @@ void flyer_draw
   (wflyer_t* f, int x, int z)
 {
 #ifdef _USE_PL
-  if (f->object.visible)
-  {
+  if (f->object.visible) {
     PL_mst_push();
     PL_mst_translate(x, f->object.position.y, z);
     PL_mst_rotatex((int)(f->object.oyz / PL_RAD256));
@@ -270,14 +269,17 @@ void flyer_draw
 }
 
 void flyers_draw
-  (wworld_t* w, pt2d_t relative)
+  (wworld_t* w, pt2d_t relative, vec2d_t* vision)
 {
   for (unsigned i=0; i < w->flyers.count; i++) {
     wflyer_t* f = wflyerlist_getptr(&(w->flyers), i);
-    int dx = f->object.position.x - relative.x;
-    int dz = f->object.position.z - relative.z;
-    int d = sqrt(dx*dx + dz*dz);
-    if (d < VISION * WTILESIZE) {
+    if (f->object.tile.x >= vision->o.x
+        && f->object.tile.x <= vision->d.x
+        && f->object.tile.z >= vision->o.z
+        && f->object.tile.z <= vision->d.z)
+    {
+      int dx = f->object.position.x - relative.x;
+      int dz = f->object.position.z - relative.z;
       flyer_draw(f, dx, dz);
     }
   }

@@ -8,7 +8,8 @@ walker: main.o
 	  ../PL3D-KC/bin/libpl.o \
 	  ../PL3D-KC/bin/libfw.o \
 	  ../lib/libwalker.a \
-	  -lbtree -lnaigama \
+	  ../sdbm_tree/libbtree.a \
+	  ../naigama/src/lib/naigama/libnaigama.a \
 	  -lX11 -lXext \
 	  -lm \
 

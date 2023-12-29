@@ -193,8 +193,9 @@ void overlay_hud_ascend
   const int n = a - (a % VERTSTRIPE);
   for (int i=-nstripes+3; i < 2; i++) {
     int v = n + (i * VERTSTRIPE);
-    unsigned sy = my - ((a - v) * pixperdegree);
-    for (int j=-8; j < 8; j++) {
+    const unsigned sy = my - ((a - v) * pixperdegree);
+    const int stretch = ((v % 360) == 0) ? 16 : 8;
+    for (int j=-stretch; j < stretch; j++) {
       overlay_towhite(buf, width, height, mx-j, sy);
     }
     char str[ 8 ];

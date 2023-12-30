@@ -397,6 +397,12 @@ void PL_OBJ_debug
 
 /* declared in ./src/lib//walker.c */
 extern
+int walker_is_day
+  ()
+  __attribute__ ((warn_unused_result));
+
+/* declared in ./src/lib//walker.c */
+extern
 void walker_show
   (walker_t* w, int argc, char* argv[]);
 

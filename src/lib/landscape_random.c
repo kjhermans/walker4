@@ -57,11 +57,13 @@ void landscape_random_extract
       lotsofrandom[ i + j ] ^= _r[ j ];
     }
   }
+#ifdef _DEBUG
   fprintf(stderr, "Sample random: ");
   for (unsigned i=0; i < 16; i++) {
     fprintf(stderr, "%.2x ", lotsofrandom[ i ]);
   }
   fprintf(stderr, "\n");
+#endif
 }
 
 /**

@@ -141,7 +141,6 @@ void landscape_tile_optimize
 
   for (unsigned i=0; i < 9; i++) {
     if (tiles[ i ] == NULL) {
-//      landscape_tile_get_new(tx+((i%3)-1), tz+((i/3)-1), &(cache[ i ]));
       landscape_tile_get(ls, tx+((i%3)-1), tz+((i/3)-1), &(cache[ i ]));
       tiles[ i ] = &(cache[ i ]);
     }

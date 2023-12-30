@@ -44,7 +44,7 @@ void landscape_init
     seed = WDEFAULTSEED;
   }
   srand(seed);
-  landscape_td_init(ls, seed, reset);
+  landscape_db_init(ls, seed, reset);
   landscape_random_extract();
 
   ls->cache.mem.qp.x = -1;
@@ -62,7 +62,7 @@ void landscape_init
   for (int i=0; i < 3; i++) {
     for (int j=0; j < 3; j++) {
       landscape_quadrant_optimize(ls, &(ls->cache.mem.quadrant[ i ][ j ]));
-      landscape_td_put(ls, &(ls->cache.mem.quadrant[ i ][ j ]));
+      landscape_db_quadrant_store(ls, &(ls->cache.mem.quadrant[ i ][ j ]));
     }
   }
 }

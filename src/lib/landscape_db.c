@@ -38,7 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
-void landscape_td_init
+void landscape_db_init
   (wlandscape_t* ls, unsigned seed, int reset)
 {
   char path[ 256 ];
@@ -53,7 +53,7 @@ void landscape_td_init
   td_open(&(ls->cache.disk), path, 0, openflags, 0644);
 }
 
-void landscape_td_put
+void landscape_db_quadrant_store
   (wlandscape_t* ls, wquadrant_t* q)
 {
   int keydata[ 2 ] = { q->qx, q->qz };
@@ -63,7 +63,7 @@ void landscape_td_put
   td_put(&(ls->cache.disk), &key, &val, 0);
 }
 
-int landscape_td_get
+int landscape_db_quadrant_retrieve
   (wlandscape_t* ls, wquadrant_t* q)
 {
   int keydata[ 2 ] = { q->qx, q->qz };

@@ -68,17 +68,17 @@ void landscape_init
 
 /* declared in ./src/lib//landscape_db.c */
 extern
-void landscape_td_init
+void landscape_db_init
   (wlandscape_t* ls, unsigned seed, int reset);
 
 /* declared in ./src/lib//landscape_db.c */
 extern
-void landscape_td_put
+void landscape_db_quadrant_store
   (wlandscape_t* ls, wquadrant_t* q);
 
 /* declared in ./src/lib//landscape_db.c */
 extern
-int landscape_td_get
+int landscape_db_quadrant_retrieve
   (wlandscape_t* ls, wquadrant_t* q)
   __attribute__ ((warn_unused_result));
 

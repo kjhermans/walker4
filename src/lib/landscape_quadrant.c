@@ -74,7 +74,7 @@ void landscape_quadrant_get_new
 {
   q->qx = qx;
   q->qz = qz;
-  if (landscape_td_get(ls, q) == 0) {
+  if (landscape_db_quadrant_retrieve(ls, q) == 0) {
 #ifdef _DEBUG
     fprintf(stderr, "quadrant %d, %d cached in db\n", qx, qz);
 #endif
@@ -91,7 +91,7 @@ void landscape_quadrant_get_new
     }
   }
   landscape_quadrant_optimize(ls, q);
-  landscape_td_put(ls, q);
+  landscape_db_quadrant_store(ls, q);
 }
 
 void landscape_quadrant_get

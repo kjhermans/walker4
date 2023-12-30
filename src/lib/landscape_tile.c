@@ -89,7 +89,7 @@ void landscape_tile_chasm
   int chasmzvar = ((r >> 12) & 0x0f);
   chasmx += (8 - chasmxvar);
   chasmz += (8 - chasmzvar);
-  float chasmangle = (((r >> 24) & 0xff) * WPI / 1024) + 0.1;
+  float chasmangle = (((r >> 24) & 0xff) * WPI / 512) + 0.01;
   float a = tan(chasmangle);
   float b = chasmz - (a * chasmx);
   float pa = -(1/a);

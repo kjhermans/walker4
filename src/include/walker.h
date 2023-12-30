@@ -197,8 +197,8 @@ typedef struct
       pt2d_t                    qp;
       wquadrant_t               quadrant[ 3 ][ 3 ];
     }                         mem;
-    td_t                      disk;
   }                         cache;
+  walker_t*                 walker;
 }
 wlandscape_t;
 
@@ -227,6 +227,7 @@ wworld_t;
 struct walker
 {
   wworld_t                  world;
+  td_t                      db;
   struct {
     unsigned                  width, height;
     struct {

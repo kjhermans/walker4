@@ -110,7 +110,7 @@ struct wobject
   int                       speed_hor;  /* ground speed (positive is forward)*/
 
   void(*                    update)(wobject_t*, walker_t*);
-  void(*                    draw)(wobject_t*, walker_t*);
+  void(*                    draw)(wobject_t*, walker_t*, pt2d_t, vec2d_t);
 
   struct {
     pt2d_t                    tile;

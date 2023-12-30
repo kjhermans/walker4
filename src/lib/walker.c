@@ -124,6 +124,12 @@ void walker_update
   player_update(&(w->world.player), &(w->world.landscape));
   flyers_update(&(wglobal->world));
   flyer_update(&(wglobal->world), &(wglobal->world.player.flyer));
+
+  for (unsigned i=0; i < w->world.objects.count; i++) {
+    wobject_t* o = wobjectlist_getptr(&(w->world.objects), i);
+    o->update(o, w);
+  }
+
   snprintf(statsbuffer, sizeof(statsbuffer)
     , "px:%d, pz:%d, py:%d, tx:%d, tz:%d, qx:%d, qz:%d, "
       "oxz:%d, oyz:%d, spd:%d, fll: %d"
@@ -329,6 +335,19 @@ void display
       }
 
     }
+  }
+
+  for (unsigned i=0; i < wglobal->world.objects.count; i++) {
+    wobject_t* o = wobjectlist_getptr(&(wglobal->world.objects), i);
+    o->draw(
+      o,
+      wglobal,
+      (pt2d_t){
+        .x = wglobal->world.player.object.position.x,
+        .z = wglobal->world.player.object.position.z
+      },
+      vision
+    );
   }
 
   flyers_draw(

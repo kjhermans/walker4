@@ -68,10 +68,10 @@ void landscape_tile_hill
   }
   tile->hardness =
     ((( /* random */
-      ((c >> 8) & 0x03) &
+      ((c >> 8) & 0x07) &
       /* the closer to the hilltop, the more ones */
       ((int)(4 * (HILL_MAXDIST - distance) / HILL_MAXDIST))
-    ) % 4) == 0) ? 3 : 0;
+    ) % 8) == 0) ? 3 : 0;
 
   tile->elevation[ 4 ] *= 32;
   tile->elevation[ 4 ] += 1024;

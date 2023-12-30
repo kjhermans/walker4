@@ -42,6 +42,81 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define HILL_MAXDIST     ((HILL_INCIDENCE+1)*1.5) // sqrt(2) rounded up
 #define CHASM_INCIDENCE  0x1f
 
+static
+void landscape_tile_hill
+  (int tx, int tz, wtile_t* tile)
+{
+  int hillx, hillz, r, hillness, dx, dz;
+  float distance;
+  uint32_t c = landscape_random_get_topo(tx, tz, WTOPIC_COLOR);
+
+  tile->color = ((unsigned char)c) % 4;
+  hillx = (tx & ~(HILL_INCIDENCE));
+  hillz = (tz & ~(HILL_INCIDENCE));
+  r = landscape_random_get_topo(hillx, hillz, WTOPIC_HILLS);
+  hillness = (r & 0x3f);
+  hillx += ((r >> 16) & 0x0f);
+  hillz += ((r >> 24) & 0x0f);
+  dx = (hillx - tx);
+  dz = (hillz - tz);
+
+  distance = sqrt((dx * dx) + (dz * dz));
+  if (distance == 0) {
+    tile->elevation[ 4 ] += hillness;
+  } else {
+    tile->elevation[ 4 ] += (hillness / distance);
+  }
+  tile->hardness =
+    ((( /* random */
+      ((c >> 8) & 0x03) &
+      /* the closer to the hilltop, the more ones */
+      ((int)(4 * (HILL_MAXDIST - distance) / HILL_MAXDIST))
+    ) % 4) == 0) ? 3 : 0;
+
+  tile->elevation[ 4 ] *= 32;
+  tile->elevation[ 4 ] += 1024;
+}
+
+static
+void landscape_tile_chasm
+  (int tx, int tz, wtile_t* tile)
+{
+  int chasmx = (tx & ~(CHASM_INCIDENCE));
+  int chasmz = (tz & ~(CHASM_INCIDENCE));
+  uint32_t r = landscape_random_get_topo(chasmx, chasmz, WTOPIC_CHASM);
+  int chasmness = (r & 0x3f);
+  int chasmxvar = ((r >> 8) & 0x0f);
+  int chasmzvar = ((r >> 12) & 0x0f);
+  chasmx += (8 - chasmxvar);
+  chasmz += (8 - chasmzvar);
+  float chasmangle = (((r >> 24) & 0xff) * WPI / 1024) + 0.1;
+  float a = tan(chasmangle);
+  float b = chasmz - (a * chasmx);
+  float pa = -(1/a);
+  float pb = tz - (pa * tx);
+  if ((a - pa) == 0) { goto NOCHASM; }
+  float mx = (pb - b) / (a - pa);
+  float mz = (a * mx) + b;
+  float dchasm;
+  {
+    int dx = (mx - tx);
+    int dz = (mz - tz);
+    dchasm = sqrt((dx * dx) + (dz * dz));
+  }
+  if (dchasm > 16) { goto NOCHASM; }
+  int de = (float)chasmness * dchasm * 1.2;
+  if (de > tile->elevation[ 4 ]) {
+    tile->elevation[ 4 ] = 64;
+    tile->hardness = 2;
+  } else {
+    tile->elevation[ 4 ] -= de;
+    if (de > 512 || tile->elevation[ 4 ] < 600) {
+      tile->hardness = 2;
+    }
+  }
+NOCHASM:
+}
+
 /**
  * Deterministically creates a landscape quadrant's tile.
  * This code should be called only when new tiles are created (ie when
@@ -54,80 +129,12 @@ void landscape_tile_get_new
   fprintf(stderr, "tile get (%d, %d) new\n", tx, tz);
 #endif
 
-  int c = landscape_random_get_topo(tx, tz, WTOPIC_COLOR);
-
-  tile->color = ((unsigned char)c) % 4;
   tile->elevation[ 4 ] =
     landscape_random_get_topo_exp(
       tx, tz, WTOPIC_ELEVATION, WTILE_VARIATION
     );
-
-  {
-    int hillx, hillz, r, hillness, dx, dz;
-    float distance;
-
-    hillx = (tx & ~(HILL_INCIDENCE));
-    hillz = (tz & ~(HILL_INCIDENCE));
-    r = landscape_random_get_topo(hillx, hillz, WTOPIC_HILLS);
-    hillness = (r & 0x3f);
-    hillx += ((r >> 16) & 0x0f);
-    hillz += ((r >> 24) & 0x0f);
-    dx = (hillx - tx);
-    dz = (hillz - tz);
-
-    distance = sqrt((dx * dx) + (dz * dz));
-    if (distance == 0) {
-      tile->elevation[ 4 ] += hillness;
-    } else {
-      tile->elevation[ 4 ] += (hillness / distance);
-    }
-    tile->hardness =
-      ((( /* random */
-        ((c >> 8) & 0x03) &
-        /* the closer to the hilltop, the more ones */
-        ((int)(4 * (HILL_MAXDIST - distance) / HILL_MAXDIST))
-      ) % 4) == 0) ? 3 : 0;
-  }
-
-  tile->elevation[ 4 ] *= 32;
-  tile->elevation[ 4 ] += 1024;
-
-  {
-    int chasmx = (tx & ~(CHASM_INCIDENCE));
-    int chasmz = (tz & ~(CHASM_INCIDENCE));
-    uint32_t r = landscape_random_get_topo(chasmx, chasmz, WTOPIC_CHASM);
-    int chasmness = (r & 0x3f);
-    int chasmxvar = ((r >> 8) & 0x0f);
-    int chasmzvar = ((r >> 12) & 0x0f);
-    chasmx += (8 - chasmxvar);
-    chasmz += (8 - chasmzvar);
-    float chasmangle = (((r >> 24) & 0xff) * WPI / 1024) + 0.1;
-    float a = tan(chasmangle);
-    float b = chasmz - (a * chasmx);
-    float pa = -(1/a);
-    float pb = tz - (pa * tx);
-    if ((a - pa) == 0) { goto NOCHASM; }
-    float mx = (pb - b) / (a - pa);
-    float mz = (a * mx) + b;
-    float dchasm;
-    {
-      int dx = (mx - tx);
-      int dz = (mz - tz);
-      dchasm = sqrt((dx * dx) + (dz * dz));
-    }
-    if (dchasm > 16) { goto NOCHASM; }
-    int de = (float)chasmness * dchasm * 1.2;
-    if (de > tile->elevation[ 4 ]) {
-      tile->elevation[ 4 ] = 64;
-      tile->hardness = 2;
-    } else {
-      tile->elevation[ 4 ] -= de;
-      if (de > 512 || tile->elevation[ 4 ] < 600) {
-        tile->hardness = 2;
-      }
-    }
-NOCHASM:
-  }
+  landscape_tile_hill(tx, tz, tile);
+  landscape_tile_chasm(tx, tz, tile);
 }
 
 /**

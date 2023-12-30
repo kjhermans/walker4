@@ -45,7 +45,7 @@ static char*           helptext =
   "w / s     Accellerate / decellerate\n"
   "space     Jump (when not flying)\n"
   "f         Access / leave flyer\n"
-  "d         Show stats\n"
+  "d         Toggle statistics display\n"
   "i         Toggle inventory display\n"
   "Esc       Quit\n"
 ;
@@ -184,6 +184,14 @@ void update
   walker_update(wglobal);
 }
 
+int walker_is_day
+  ()
+{
+  const int tod = ((t - t0) / t_cycle) % t_bgswitch;
+  const unsigned* rgb_back = t_background[ tod ];
+  return rgb_back[ 3 ];
+}
+
 static
 void display
   ()
@@ -266,12 +274,10 @@ void display
           .polys = &poly,
           .n_polys = 1
         };
-        int x = tx * WTILESIZE;
-        int y = 0; //tile.elevation * WTILESIZE;
-        int z = tz * WTILESIZE;
-        x -= wglobal->world.player.object.position.x;
-        z -= wglobal->world.player.object.position.z;
         {
+          int x = (tx * WTILESIZE) - wglobal->world.player.object.position.x;
+          int y = 0;
+          int z = (tz * WTILESIZE) - wglobal->world.player.object.position.z;
           PL_mst_push();
           PL_mst_translate(x, y, z);
           PL_render_object(&obj);
@@ -311,12 +317,10 @@ void display
           .polys = &waterpoly,
           .n_polys = 1
         };
-        int x = tx * WTILESIZE;
-        int y = 0; //tile.elevation * WTILESIZE;
-        int z = tz * WTILESIZE;
-        x -= wglobal->world.player.object.position.x;
-        z -= wglobal->world.player.object.position.z;
         {
+          int x = (tx * WTILESIZE) - wglobal->world.player.object.position.x;
+          int y = 0;
+          int z = (tz * WTILESIZE) - wglobal->world.player.object.position.z;
           PL_mst_push();
           PL_mst_translate(x, y, z);
           PL_render_object(&waterobj);
@@ -393,7 +397,6 @@ void walker_run
 {
   fprintf(stderr, "Walker::run\n");
   wglobal = w;
-
   sys_start();
 }
 

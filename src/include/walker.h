@@ -100,10 +100,14 @@ typedef struct wobject wobject_t;
 struct wobject
 {
   unsigned                  id;
+
+#define WOBJTYPE_FLYER      1
   unsigned                  type;
+
 #define WOBJFLAG_VISIBLE    (1<<0)
 #define WOBJFLAG_FLYING     (1<<1)
   unsigned                  flags;
+
   pt3d_t                    position;   /* high res position ('pixels') */
   float                     oxz, oyz;   /* orientation angle (radians) */
   int                       speed_vert; /* falling speed (negative is down) */

@@ -93,3 +93,46 @@ int walker_db_quadrant_retrieve
 
   return td_get(&(w->db), &key, &val, 0);
 }
+
+struct wokey {
+  uint32_t  discriminant;
+  unsigned  objectid;
+};
+
+static const uint32_t wokeydiscriminant =
+  ('o' << 24) |
+  ('b' << 16) |
+  ('j' << 8) |
+  '_'
+;
+
+void walker_db_object_store
+  (walker_t* w, wobject_t* o)
+{
+  struct wokey keydata = {
+    .discriminant = wokeydiscriminant,
+    .objectid = o->id
+  };
+  tdt_t key = { &keydata, sizeof(keydata) };
+  tdt_t val = { o, sizeof(wobject_t) };
+
+  td_put(&(w->db), &key, &val, 0);
+}
+
+int walker_db_object_retrieve
+  (walker_t* w, wobject_t* o)
+{
+  struct wokey keydata = {
+    .discriminant = wokeydiscriminant,
+    .objectid = o->id
+  };
+  tdt_t key = { &keydata, sizeof(keydata) };
+  tdt_t val = { o, sizeof(wobject_t) };
+
+  if (td_get(&(w->db), &key, &val, 0) == 0) {
+    //.. reposition the callbacks for update and draw withing o->
+    return 0;
+  } else {
+    return ~0;
+  }
+}

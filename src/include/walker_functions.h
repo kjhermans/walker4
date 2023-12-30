@@ -426,6 +426,17 @@ int walker_db_quadrant_retrieve
   (walker_t* w, wquadrant_t* q)
   __attribute__ ((warn_unused_result));
 
+/* declared in ./src/lib//walker_db.c */
+extern
+void walker_db_object_store
+  (walker_t* w, wobject_t* o);
+
+/* declared in ./src/lib//walker_db.c */
+extern
+int walker_db_object_retrieve
+  (walker_t* w, wobject_t* o)
+  __attribute__ ((warn_unused_result));
+
 
 
 #endif

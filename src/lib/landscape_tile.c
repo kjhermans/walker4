@@ -92,7 +92,6 @@ void landscape_tile_get_new
   tile->elevation[ 4 ] *= 32;
   tile->elevation[ 4 ] += 1024;
 
-/* */
   {
     int chasmx = (tx & ~(CHASM_INCIDENCE));
     int chasmz = (tz & ~(CHASM_INCIDENCE));
@@ -102,53 +101,33 @@ void landscape_tile_get_new
     int chasmzvar = ((r >> 12) & 0x0f);
     chasmx += (8 - chasmxvar);
     chasmz += (8 - chasmzvar);
-//    int chasmlength = ((r >> 16) & 0x1f);
     float chasmangle = (((r >> 24) & 0xff) * WPI / 1024) + 0.1;
     float a = tan(chasmangle);
     float b = chasmz - (a * chasmx);
     float pa = -(1/a);
     float pb = tz - (pa * tx);
-if ((a - pa) == 0) { goto NOCHASM; }
+    if ((a - pa) == 0) { goto NOCHASM; }
     float mx = (pb - b) / (a - pa);
     float mz = (a * mx) + b;
-/*
-    float dcenter;
-    {
-      int dx = (chasmx - tx);
-      int dz = (chasmz - tz);
-//if (dx == 0 && dz == 0) { goto NOCHASM; }
-      dcenter = 200 - sqrt((dx * dx) + (dz * dz));
-    }
-*/
     float dchasm;
     {
       int dx = (mx - tx);
       int dz = (mz - tz);
-//if (dx == 0 && dz == 0) { goto NOCHASM; }
       dchasm = sqrt((dx * dx) + (dz * dz));
     }
-//    int de = (float)chasmness * (dcenter + dchasm) / 20; // * 256.0;
-    int de = (float)chasmness * (dchasm); // * 256.0;
-#ifdef _DEBUG
-fprintf(stderr, "depth %d * %f * 64 = %d\n", chasmness, dchasm, de);
-#endif
-/*
-    if (de > 512 && ) {
-      tile->hardness = 2;
-    }
-*/
+    if (dchasm > 16) { goto NOCHASM; }
+    int de = (float)chasmness * dchasm * 1.2;
     if (de > tile->elevation[ 4 ]) {
       tile->elevation[ 4 ] = 64;
       tile->hardness = 2;
     } else {
       tile->elevation[ 4 ] -= de;
-      if (de > 512 && tile->elevation[ 4 ] < 512) {
+      if (de > 512 || tile->elevation[ 4 ] < 600) {
         tile->hardness = 2;
       }
     }
 NOCHASM:
   }
-/* */
 }
 
 /**

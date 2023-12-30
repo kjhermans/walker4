@@ -117,13 +117,13 @@ void overlay_setpixel
   buf[ (width*y) + x ] = 0xffffffff;
 }
 
-void overlay_towhite
+void overlay_inverse
   (unsigned* buf, unsigned width, unsigned height, unsigned x, unsigned y)
 {
   if (y >= height || x >= width) {
     return;
   }
-  buf[ (width*y) + x ] |= 0x60606060;
+  buf[ (width*y) + x ] = ~(buf[ (width*y) + x ]);
 }
 
 overlay_hud_t hud = { 0 };
@@ -146,14 +146,14 @@ void overlay_hud_compass
   const int a = hud.angle_compass;
 
   for (unsigned i=off; i < len; i++) {
-    overlay_towhite(buf, width, height, i, h);
+    overlay_inverse(buf, width, height, i, h);
   }
   const int n = a - (a % STRIPE);
   for (int i=0; i < nstripes + 1; i++) {
     int v = n + ((i - nstripes/2) * STRIPE);
     unsigned sx = m - ((a - v) * pixperdegree);
     for (int j=-8; j < 8; j++) {
-      overlay_towhite(buf, width, height, sx, h-j);
+      overlay_inverse(buf, width, height, sx, h-j);
     }
     char str[ 8 ];
     if (v < 0) {
@@ -163,7 +163,7 @@ void overlay_hud_compass
       v -= 360;
     }
     snprintf(str, 8, "%d", v);
-    overlay_string_towhite(buf, width, height, sx, h+16, str);
+    overlay_string_inverse(buf, width, height, sx, h+16, str);
   }
 }
 
@@ -181,7 +181,7 @@ void overlay_hud_ascend
   const unsigned len = chk * 5;
 
   for (unsigned i=off; i < len; i++) {
-    overlay_towhite(buf, width, height, mx, i);
+    overlay_inverse(buf, width, height, mx, i);
   }
 
 #define VISIONHEIGHT 90 // degrees
@@ -196,7 +196,7 @@ void overlay_hud_ascend
     const unsigned sy = my - ((a - v) * pixperdegree);
     const int stretch = ((v % 360) == 0) ? 16 : 8;
     for (int j=-stretch; j < stretch; j++) {
-      overlay_towhite(buf, width, height, mx-j, sy);
+      overlay_inverse(buf, width, height, mx-j, sy);
     }
     char str[ 8 ];
     if (v < 0) {
@@ -206,11 +206,11 @@ void overlay_hud_ascend
       v -= 360;
     }
     snprintf(str, 8, "%d", v);
-    overlay_string_towhite(buf, width, height, mx+10, sy, str);
+    overlay_string_inverse(buf, width, height, mx+10, sy, str);
   }
 
   for (int i=-20; i < 20; i++) {
-    overlay_towhite(buf, width, height, mx+i, my);
+    overlay_inverse(buf, width, height, mx+i, my);
   }
 }
 
@@ -225,14 +225,14 @@ void overlay_hud_sight
   const unsigned my = height / 2;
 
   for (int i=0; i < 16; i++) {
-    overlay_towhite(buf, width, height, mx-48+i, my-32);
-    overlay_towhite(buf, width, height, mx-48, my-32+i);
-    overlay_towhite(buf, width, height, mx+48-i, my+32);
-    overlay_towhite(buf, width, height, mx+48, my+32-i);
-    overlay_towhite(buf, width, height, mx-48+i, my+32);
-    overlay_towhite(buf, width, height, mx-48, my+32-i);
-    overlay_towhite(buf, width, height, mx+48-i, my-32);
-    overlay_towhite(buf, width, height, mx+48, my-32+i);
+    overlay_inverse(buf, width, height, mx-48+i, my-32);
+    overlay_inverse(buf, width, height, mx-48, my-32+i);
+    overlay_inverse(buf, width, height, mx+48-i, my+32);
+    overlay_inverse(buf, width, height, mx+48, my+32-i);
+    overlay_inverse(buf, width, height, mx-48+i, my+32);
+    overlay_inverse(buf, width, height, mx-48, my+32-i);
+    overlay_inverse(buf, width, height, mx+48-i, my-32);
+    overlay_inverse(buf, width, height, mx+48, my-32+i);
   }
 }
 
@@ -248,7 +248,7 @@ void overlay_hud_height
   char str[ 32 ];
 
   snprintf(str, 8, "%d", hud.my_height);
-  overlay_string_towhite(buf, width, height, mx-64, my-16, str);
+  overlay_string_inverse(buf, width, height, mx-64, my-16, str);
 }
 
 /**
@@ -271,14 +271,14 @@ void overlay_cross
   (unsigned* buf, unsigned width, unsigned height)
 {
   for (int i=-8; i < 8; i++) {
-    overlay_setpixel(buf, width, height, width/2, height/2 + i);
+    overlay_inverse(buf, width, height, width/2, height/2 + i);
   }
   for (int i=-8; i < 8; i++) {
-    overlay_setpixel(buf, width, height, width/2 + i, height/2);
+    overlay_inverse(buf, width, height, width/2 + i, height/2);
   }
 }
 
-void overlay_string_towhite
+void overlay_string_inverse
   (unsigned* buf, unsigned w, unsigned h, unsigned x, unsigned y, char* s)
 {
   unsigned xx = x;
@@ -293,28 +293,28 @@ void overlay_string_towhite
     unsigned char* letter = font[ s[ i ] - 32 ];
     for (unsigned j=0; j < 13; j++) {
       if (letter[ j ] & 0xf0) {
-        overlay_towhite(buf, w, h, xx+0, yy-j);
+        overlay_inverse(buf, w, h, xx+0, yy-j);
       }
       if (letter[ j ] & 0x70) {
-        overlay_towhite(buf, w, h, xx+1, yy-j);
+        overlay_inverse(buf, w, h, xx+1, yy-j);
       }
       if (letter[ j ] & 0x30) {
-        overlay_towhite(buf, w, h, xx+2, yy-j);
+        overlay_inverse(buf, w, h, xx+2, yy-j);
       }
       if (letter[ j ] & 0x10) {
-        overlay_towhite(buf, w, h, xx+3, yy-j);
+        overlay_inverse(buf, w, h, xx+3, yy-j);
       }
       if (letter[ j ] & 0x0f) {
-        overlay_towhite(buf, w, h, xx+4, yy-j);
+        overlay_inverse(buf, w, h, xx+4, yy-j);
       }
       if (letter[ j ] & 0x07) {
-        overlay_towhite(buf, w, h, xx+5, yy-j);
+        overlay_inverse(buf, w, h, xx+5, yy-j);
       }
       if (letter[ j ] & 0x03) {
-        overlay_towhite(buf, w, h, xx+6, yy-j);
+        overlay_inverse(buf, w, h, xx+6, yy-j);
       }
       if (letter[ j ] & 0x01) {
-        overlay_towhite(buf, w, h, xx+7, yy-j);
+        overlay_inverse(buf, w, h, xx+7, yy-j);
       }
     }
     xx += 10;

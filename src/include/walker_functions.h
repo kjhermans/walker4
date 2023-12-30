@@ -237,7 +237,7 @@ void overlay_setpixel
 
 /* declared in ./src/lib//overlay.c */
 extern
-void overlay_towhite
+void overlay_inverse
   (unsigned* buf, unsigned width, unsigned height, unsigned x, unsigned y);
 
 /* declared in ./src/lib//overlay.c */
@@ -292,7 +292,7 @@ void overlay_cross
 
 /* declared in ./src/lib//overlay.c */
 extern
-void overlay_string_towhite
+void overlay_string_inverse
   (unsigned* buf, unsigned w, unsigned h, unsigned x, unsigned y, char* s);
 
 /* declared in ./src/lib//overlay.c */

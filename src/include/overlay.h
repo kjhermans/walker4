@@ -21,7 +21,7 @@ void overlay_setpixel
 void overlay
   (unsigned* buf, unsigned width, unsigned height);
 
-void overlay_string_towhite
+void overlay_string_inverse
   (unsigned* buf, unsigned w, unsigned h, unsigned x, unsigned y, char* s);
 
 void overlay_string

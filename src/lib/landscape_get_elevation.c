@@ -81,7 +81,7 @@ int landscape_triangle_elevation
 void landscape_get_elevation
   (wlandscape_t* ls, wobject_t* o, wground_t* ground)
 {
-  int tx = o->tile.x, tz = o->tile.z;
+  int tx = o->cache.tile.x, tz = o->cache.tile.z;
   wtile_t tile = { 0 };
 
   if (landscape_tile_get_cache(ls, tx, tz, &tile) == 0) {

@@ -33,6 +33,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
+#undef ARRAY_EQUALS
+#define ARRAY_EQUALS(a,b) (a.id == b.id)
+MAKE_ARRAY_CODE(wobject_t, wobjectlist_)
+
 /**
  * Applies gravity to the object, that is: increase downward velocity,
  * when the object is not flying and is not on solid ground.
@@ -40,7 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_gravity
   (wobject_t* o)
 {
-  if (o->flying || o->ground.supported) {
+  if (o->flags & WOBJFLAG_FLYING || o->cache.ground.supported) {
     return;
   }
   if ((o->speed_vert -= GRAVITY) < TERMINALVELOCITY) {
@@ -51,7 +55,7 @@ void object_gravity
 void object_friction
   (wobject_t* o)
 {
-  if (o->ground.supported) {
+  if (o->cache.ground.supported) {
     if (o->speed_hor > 0) {
       --(o->speed_hor);
     } else if (o->speed_hor < 0) {
@@ -138,7 +142,7 @@ int object_move
   int camrx = (int)(o->oyz / PL_RAD256);
   o->position.x += (o->speed_hor * PL_sin[camry & PL_TRIGMSK]) >> PL_P;
   o->position.z += (o->speed_hor * PL_cos[camry & PL_TRIGMSK]) >> PL_P;
-  if (o->flying) {
+  if (o->flags & WOBJFLAG_FLYING) {
     o->position.y += -((o->speed_hor * PL_sin[camrx & PL_TRIGMSK]) >> PL_P);
   } else {
     o->position.y += o->speed_vert;
@@ -146,11 +150,11 @@ int object_move
 
   /* checking whether on solid ground */
 //  if (o->speed_hor) {
-    o->ground.supported = 0;
-    landscape_get_elevation(ls, o, &(o->ground));
-    if (o->position.y <= o->ground.elevation + 64) {
-      o->position.y = o->ground.elevation + 64;
-      o->ground.supported = 1;
+    o->cache.ground.supported = 0;
+    landscape_get_elevation(ls, o, &(o->cache.ground));
+    if (o->position.y <= o->cache.ground.elevation + 64) {
+      o->position.y = o->cache.ground.elevation + 64;
+      o->cache.ground.supported = 1;
     }
 //  }
 
@@ -176,11 +180,11 @@ int object_move
 
   landscape_pos2tile(
     o->position.x, o->position.z,
-    &(o->tile.x), &(o->tile.z)
+    &(o->cache.tile.x), &(o->cache.tile.z)
   );
   landscape_tile2quadrant(
-    o->tile.x, o->tile.z,
-    &(o->quadrant.x), &(o->quadrant.z),
+    o->cache.tile.x, o->cache.tile.z,
+    &(o->cache.quadrant.x), &(o->cache.quadrant.z),
     0, 0
   );
 
@@ -210,7 +214,7 @@ void object_debug
     o->position.x, o->position.y, o->position.z, 
     o->oxz, o->oyz,
     o->speed_hor, o->speed_vert,
-    o->flying,
-    o->ground.supported
+    o->flags & WOBJFLAG_FLYING,
+    o->cache.ground.supported
   );
 }

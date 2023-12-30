@@ -206,15 +206,14 @@ void flyers_init
 {
   for (int i=0; i < 10; i++) {
     wflyer_t f = {
-      .object.visible = 1,
+      .object.flags = WOBJFLAG_VISIBLE|WOBJFLAG_FLYING,
       .object.position.x = ((i-5) * 200),
       .object.position.y = 1000,
       .object.position.z = 0,
       .object.oxz = 0,
       .object.oyz = 0,
       .object.speed_vert = 0,
-      .object.speed_hor = 1,
-      .object.flying = 1
+      .object.speed_hor = 1
     };
     wflyerlist_push(&(w->flyers), f);
   }
@@ -254,7 +253,7 @@ void flyers_update
 void flyer_draw
   (wflyer_t* f, int x, int z)
 {
-  if (f->object.visible) {
+  if (f->object.flags & WOBJFLAG_VISIBLE) {
     PL_mst_push();
     PL_mst_translate(x, f->object.position.y, z);
     PL_mst_rotatex((int)(f->object.oyz / PL_RAD256));
@@ -269,10 +268,10 @@ void flyers_draw
 {
   for (unsigned i=0; i < w->flyers.count; i++) {
     wflyer_t* f = wflyerlist_getptr(&(w->flyers), i);
-    if (f->object.tile.x >= vision->o.x
-        && f->object.tile.x <= vision->d.x
-        && f->object.tile.z >= vision->o.z
-        && f->object.tile.z <= vision->d.z)
+    if (f->object.cache.tile.x >= vision->o.x
+        && f->object.cache.tile.x <= vision->d.x
+        && f->object.cache.tile.z >= vision->o.z
+        && f->object.cache.tile.z <= vision->d.z)
     {
       int dx = f->object.position.x - relative.x;
       int dz = f->object.position.z - relative.z;

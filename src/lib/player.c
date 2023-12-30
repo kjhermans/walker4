@@ -51,13 +51,13 @@ void player_handle_keys
   } else if (pkb_key_held(FW_KEY_ARROW_LEFT)) {
     object_turnleft(&(p->object), PLAYER_TURNRATE);
   } else if (pkb_key_held(FW_KEY_ARROW_UP)) {
-    if (p->object.flying) {
+    if (p->object.flags & WOBJFLAG_FLYING) {
       object_turndown(&(p->object), PLAYER_TURNRATE);
     } else {
       object_turnup(&(p->object), PLAYER_TURNRATE);
     }
   } else if (pkb_key_held(FW_KEY_ARROW_DOWN)) {
-    if (p->object.flying) {
+    if (p->object.flags & WOBJFLAG_FLYING) {
       object_turnup(&(p->object), PLAYER_TURNRATE);
     } else {
       object_turndown(&(p->object), PLAYER_TURNRATE);
@@ -70,7 +70,11 @@ void player_handle_keys
   } else if (pkb_key_pressed('b')) {
     p->object.speed_hor = 0;
   } else if (pkb_key_pressed('a')) {
-    p->object.flying = !(p->object.flying);
+    if (p->object.flags & WOBJFLAG_FLYING) {
+       p->object.flags &= ~(WOBJFLAG_FLYING);
+    } else {
+       p->object.flags != (WOBJFLAG_FLYING);
+    }
 #endif
   } else if (pkb_key_pressed('d')) {
     w->show_stats = !(w->show_stats);
@@ -86,7 +90,7 @@ void player_handle_keys
     player_flying(p, w);
   }
   if (pkb_key_pressed(w->config.keybindings.jump)) {
-    if (p->object.ground.supported) {
+    if (p->object.cache.ground.supported) {
       p->object.speed_vert = PLAYER_JUMPSPEED;
     }
   }
@@ -95,11 +99,11 @@ void player_handle_keys
 void player_flying
   (wplayer_t* p, walker_t* w)
 {
-  if (p->object.flying) {
-    if (p->object.ground.supported) {
-      p->object.flying = 0;
+  if (p->object.flags & WOBJFLAG_FLYING) {
+    if (p->object.cache.ground.supported) {
+      p->object.flags &= ~(WOBJFLAG_FLYING);
       p->flyer.object.position = p->object.position;
-      p->flyer.object.visible = 1;
+      p->flyer.object.flags |= WOBJFLAG_VISIBLE;
       overlay_set_flying(0);
       walker_warn(w, "You have dismounted your flyer.");
     } else {
@@ -110,8 +114,8 @@ void player_flying
     int dz = p->object.position.z - p->flyer.object.position.z;
     int d = sqrt(dx*dx + dz*dz);
     if (d < 2 * WTILESIZE) {
-      p->flyer.object.visible = 0;
-      p->object.flying = 1;
+      p->flyer.object.flags &= ~(WOBJFLAG_VISIBLE);
+      p->object.flags |= WOBJFLAG_FLYING;
       overlay_set_flying(1);
       walker_warn(w, "You have mounted your flyer.");
     } else {
@@ -126,7 +130,7 @@ void player_flying
 void player_update
   (wplayer_t* p, wlandscape_t* ls)
 {
-  pt2d_t q = p->object.quadrant;
+  pt2d_t q = p->object.cache.quadrant;
   int m;
 
   m = object_move(&(p->object), ls);
@@ -134,15 +138,16 @@ void player_update
   object_friction(&(p->object));
 
   if (m) {
-    if (q.x != p->object.quadrant.x || q.z != p->object.quadrant.z) {
+    if (q.x != p->object.cache.quadrant.x || q.z != p->object.cache.quadrant.z)
+    {
       landscape_cache_update(
         ls,
-        p->object.quadrant.x-1,
-        p->object.quadrant.z-1
+        p->object.cache.quadrant.x-1,
+        p->object.cache.quadrant.z-1
       );
     }
   }
-  if (p->object.flying) {
+  if (p->object.flags & WOBJFLAG_FLYING) {
     hud.angle_compass = (p->object.oxz / WDEGRAD);
     hud.angle_ascend = (p->object.oyz / WDEGRAD);
     hud.my_height = p->object.position.y;
@@ -155,9 +160,9 @@ void player_init
   p->object.position.x = WQUADRANT_DIMENSION * WTILESIZE / 2;
   p->object.position.y = 4096;
   p->object.position.z = WQUADRANT_DIMENSION * WTILESIZE / 2;
-  p->flyer.object.visible = 1;
+  p->flyer.object.flags |= WOBJFLAG_VISIBLE;
   p->flyer.object.position.x = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
   p->flyer.object.position.y = 4096;
   p->flyer.object.position.z = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
-  p->flyer.object.flying = 0;
+  p->flyer.object.flags &= ~(WOBJFLAG_FLYING);
 }

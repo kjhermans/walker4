@@ -39,6 +39,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sdbm_tree/td.h>
 #include <inttypes.h>
 
+typedef struct walker walker_t;
+
 #define WPI 3.141592
 #define WDEGRAD (WPI / 180)
 
@@ -93,20 +95,29 @@ typedef struct
 }
 wground_t;
 
-typedef struct
+typedef struct wobject wobject_t;
+
+struct wobject
 {
-  int                       visible;
+  unsigned                  id;
+  unsigned                  type;
+#define WOBJFLAG_VISIBLE    (1<<0)
+#define WOBJFLAG_FLYING     (1<<1)
+  unsigned                  flags;
   pt3d_t                    position;   /* high res position ('pixels') */
   float                     oxz, oyz;   /* orientation angle (radians) */
   int                       speed_vert; /* falling speed (negative is down) */
   int                       speed_hor;  /* ground speed (positive is forward)*/
-  int                       flying;     /* not affected by gravity */
 
-  pt2d_t                    tile;
-  pt2d_t                    quadrant;
-  wground_t                 ground;
-}
-wobject_t;
+  void(*                    update)(wobject_t*, walker_t*);
+  void(*                    draw)(wobject_t*, walker_t*);
+
+  struct {
+    pt2d_t                    tile;
+    pt2d_t                    quadrant;
+    wground_t                 ground;
+  }                         cache;
+};
 
 typedef struct
 {
@@ -193,12 +204,14 @@ wlandscape_t;
 
 #include <array.h>
 MAKE_ARRAY_HEADER(wflyer_t, wflyerlist_)
+MAKE_ARRAY_HEADER(wobject_t, wobjectlist_)
 
 typedef struct
 {
   wobject_t                 viewport;
   wplayer_t                 player;
   wflyerlist_t              flyers;
+  wobjectlist_t             objects;
   wlandscape_t              landscape;
 }
 wworld_t;
@@ -211,7 +224,7 @@ wworld_t;
 #include "text.h"
 #include "overlay.h"
 
-typedef struct
+struct walker
 {
   wworld_t                  world;
   struct {
@@ -238,8 +251,7 @@ typedef struct
     unsigned                  item;
     unsigned                  amount;
   }                         inventory[ 10 ];
-}
-walker_t;
+};
 
 #include <inttypes.h>
 #include "walker_functions.h"

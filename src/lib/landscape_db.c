@@ -46,8 +46,10 @@ void landscape_td_init
 
   snprintf(path, sizeof(path), "%s/.walker4.%u.db", getenv("HOME"), seed);
   if (reset) {
+    fprintf(stderr, "Walker::init Resetting database for seed %u\n", seed);
     openflags |= O_TRUNC;
   }
+  fprintf(stderr, "Walker::init Opening database at '%s'\n", path);
   td_open(&(ls->cache.disk), path, 0, openflags, 0644);
 }
 

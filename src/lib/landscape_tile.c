@@ -62,7 +62,7 @@ void landscape_tile_hill
 
   distance = sqrt((dx * dx) + (dz * dz));
   if (distance == 0) {
-    tile->elevation[ 4 ] += hillness;
+    tile->elevation[ 4 ] += hillness + 2;
   } else {
     tile->elevation[ 4 ] += (hillness / distance);
   }

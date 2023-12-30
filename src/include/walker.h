@@ -130,7 +130,7 @@ typedef struct
 wplayer_t;
 
 #define WTILESIZE           256
-#define VISION              64
+#define VISION              80
 
 #define WCOLORS {                   \
   ( 32 << 16) | (127 << 8) | ( 32), \

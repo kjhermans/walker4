@@ -64,12 +64,12 @@ void json_free
 /* declared in ./src/lib//landscape.c */
 extern
 void landscape_init
-  (wlandscape_t* ls, unsigned* optseed);
+  (wlandscape_t* ls, unsigned* optseed, int reset);
 
 /* declared in ./src/lib//landscape_db.c */
 extern
 void landscape_td_init
-  (wlandscape_t* ls, unsigned seed);
+  (wlandscape_t* ls, unsigned seed, int reset);
 
 /* declared in ./src/lib//landscape_db.c */
 extern
@@ -403,7 +403,7 @@ void walker_run
 /* declared in ./src/lib//walker.c */
 extern
 void walker_init
-  (walker_t* w, unsigned* optseed);
+  (walker_t* w, unsigned* optseed, int reset);
 
 /* declared in ./src/lib//walker.c */
 extern

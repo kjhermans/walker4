@@ -41,13 +41,35 @@ int main
   char* seedstring = 0;
   unsigned seed;
   int r;
+  int reset = 0;
 
   r = queryargs(argc, argv, 'c', "config", 0, 1, 0, &configfile); (void)r;
   r = queryargs(argc, argv, 's', "seed", 0, 1, 0, &seedstring); (void)r;
   if (seedstring) {
     seed = atoi(seedstring);
   }
-  walker_init(&w, (seedstring ? &seed : 0));
+  if (queryargs(argc, argv, 'r', "resetdb", 0, 0, 0, 0) == 0) {
+    reset = 1;
+  }
+  if (queryargs(argc, argv, 'h', "help", 0, 0, 0, 0) == 0) {
+    fprintf(stderr,
+      "Usage: %s [options]\n\n"
+      "Options:\n"
+      "-c <path>   Specify location of config file (default ~%s).\n"
+      "-s <int>    Specify game seed (default %u).\n"
+      "-r          Reset seed database before starting.\n"
+      "-h          Print this message and exit.\n\n"
+      "Long options (with --), respectively:\n"
+      "config, seed, resetdb, help\n\n"
+      "Important default keys inside the game:\n"
+      "h           Shows key help\n"
+      , argv[ 0 ]
+      , WDEFAULTCONFIG
+      , WDEFAULTSEED
+    );
+    exit(0);
+  }
+  walker_init(&w, (seedstring ? &seed : 0), reset);
   walker_configure(&w, configfile);
   walker_show(&w, argc, argv);
   walker_run(&w);

@@ -48,6 +48,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define PL_RAD256 (WPI / 128)
 
+#define WDEFAULTSEED        0xf04d2965
+#define WDEFAULTCONFIG      "/.walker.conf"
 #define GRAVITY             2
 #define TERMINALVELOCITY    -64
 #define MAXSPEED            32

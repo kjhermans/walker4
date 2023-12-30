@@ -33,20 +33,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
-#define DEFAULTSEED 0xf04d2965
-
 void landscape_init
-  (wlandscape_t* ls, unsigned* optseed)
+  (wlandscape_t* ls, unsigned* optseed, int reset)
 {
   unsigned seed;
 
   if (optseed) {
     seed = *optseed;
   } else {
-    seed = DEFAULTSEED;
+    seed = WDEFAULTSEED;
   }
   srand(seed);
-  landscape_td_init(ls, seed);
+  landscape_td_init(ls, seed, reset);
   landscape_random_extract();
 
   ls->cache.mem.qp.x = -1;

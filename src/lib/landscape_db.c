@@ -39,12 +39,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "walker.h"
 
 void landscape_td_init
-  (wlandscape_t* ls, unsigned seed)
+  (wlandscape_t* ls, unsigned seed, int reset)
 {
   char path[ 256 ];
+  int openflags = O_RDWR|O_CREAT;
 
   snprintf(path, sizeof(path), "%s/.walker4.%u.db", getenv("HOME"), seed);
-  td_open(&(ls->cache.disk), path, 0, O_RDWR|O_CREAT, 0644);
+  if (reset) {
+    openflags |= O_TRUNC;
+  }
+  td_open(&(ls->cache.disk), path, 0, openflags, 0644);
 }
 
 void landscape_td_put

@@ -88,16 +88,20 @@ static const unsigned  t_background[][ 4 ] = {
 void walker_configure
   (walker_t* w, char* path)
 {
+  char* buf = 0;
+  unsigned len = 0;
+  char dfltcnf[ 1024 ];
+
   fprintf(stderr, "Walker::configure\n");
-  if (path) {
-    char* buf = 0;
-    unsigned len = 0;
-    if (absorb_file(path, (unsigned char**)(&buf), &len) == 0) {
-      if ((w->json = json_parse(buf)) == NULL) {
-        fprintf(stderr, "WARNING: Config file '%s' JSON parse error.\n", path);
-      }
-      free(buf);
+  if (path == NULL) {
+    snprintf(dfltcnf, sizeof(dfltcnf), "%s" WDEFAULTCONFIG, getenv("HOME"));
+    path = dfltcnf;
+  }
+  if (absorb_file(path, (unsigned char**)(&buf), &len) == 0) {
+    if ((w->json = json_parse(buf)) == NULL) {
+      fprintf(stderr, "WARNING: Config file '%s' JSON parse error.\n", path);
     }
+    free(buf);
   }
 }
 
@@ -396,11 +400,11 @@ void walker_run
  *
  */
 void walker_init
-  (walker_t* w, unsigned* optseed)
+  (walker_t* w, unsigned* optseed, int reset)
 {
   fprintf(stderr, "Walker::init (PL); press 'h' for help\n");
   memset(w, 0, sizeof(*w));
-  landscape_init(&(w->world.landscape), optseed);
+  landscape_init(&(w->world.landscape), optseed, reset);
   w->display.width = WDISPLAY_DEFAULT_WIDTH;
   w->display.height = WDISPLAY_DEFAULT_HEIGHT;
   //w->world.player.object.supported = 1;

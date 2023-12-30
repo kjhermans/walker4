@@ -438,9 +438,19 @@ void walker_inventory
 void walker_init
   (walker_t* w, unsigned* optseed, int reset)
 {
+  unsigned seed;
+
   fprintf(stderr, "Walker::init (PL); press 'h' for help\n");
   memset(w, 0, sizeof(*w));
-  landscape_init(&(w->world.landscape), optseed, reset);
+
+  if (optseed) {
+    seed = *optseed;
+  } else {
+    seed = WDEFAULTSEED;
+  }
+  walker_db_init(w, seed, reset);
+
+  landscape_init(&(w->world.landscape), seed, w);
   w->display.width = WDISPLAY_DEFAULT_WIDTH;
   w->display.height = WDISPLAY_DEFAULT_HEIGHT;
   //w->world.player.object.supported = 1;

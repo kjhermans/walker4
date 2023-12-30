@@ -64,23 +64,7 @@ void json_free
 /* declared in ./src/lib//landscape.c */
 extern
 void landscape_init
-  (wlandscape_t* ls, unsigned* optseed, int reset);
-
-/* declared in ./src/lib//landscape_db.c */
-extern
-void landscape_db_init
-  (wlandscape_t* ls, unsigned seed, int reset);
-
-/* declared in ./src/lib//landscape_db.c */
-extern
-void landscape_db_quadrant_store
-  (wlandscape_t* ls, wquadrant_t* q);
-
-/* declared in ./src/lib//landscape_db.c */
-extern
-int landscape_db_quadrant_retrieve
-  (wlandscape_t* ls, wquadrant_t* q)
-  __attribute__ ((warn_unused_result));
+  (wlandscape_t* ls, unsigned seed, walker_t* w);
 
 /* declared in ./src/lib//landscape_get_elevation.c */
 extern
@@ -425,6 +409,22 @@ void walker_init
 extern
 void walker_warn
   (walker_t* w, char* str);
+
+/* declared in ./src/lib//walker_db.c */
+extern
+void walker_db_init
+  (walker_t* w, unsigned seed, int reset);
+
+/* declared in ./src/lib//walker_db.c */
+extern
+void walker_db_quadrant_store
+  (walker_t* w, wquadrant_t* q);
+
+/* declared in ./src/lib//walker_db.c */
+extern
+int walker_db_quadrant_retrieve
+  (walker_t* w, wquadrant_t* q)
+  __attribute__ ((warn_unused_result));
 
 
 

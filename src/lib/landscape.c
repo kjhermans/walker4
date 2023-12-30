@@ -34,19 +34,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "walker.h"
 
 void landscape_init
-  (wlandscape_t* ls, unsigned* optseed, int reset)
+  (wlandscape_t* ls, unsigned seed, walker_t* w)
 {
-  unsigned seed;
-
-  if (optseed) {
-    seed = *optseed;
-  } else {
-    seed = WDEFAULTSEED;
-  }
   srand(seed);
-  landscape_db_init(ls, seed, reset);
   landscape_random_extract();
 
+  ls->walker = w;
   ls->cache.mem.qp.x = -1;
   ls->cache.mem.qp.z = -1;
   for (int i=0; i < 3; i++) {
@@ -62,7 +55,7 @@ void landscape_init
   for (int i=0; i < 3; i++) {
     for (int j=0; j < 3; j++) {
       landscape_quadrant_optimize(ls, &(ls->cache.mem.quadrant[ i ][ j ]));
-      landscape_db_quadrant_store(ls, &(ls->cache.mem.quadrant[ i ][ j ]));
+      walker_db_quadrant_store(w, &(ls->cache.mem.quadrant[ i ][ j ]));
     }
   }
 }

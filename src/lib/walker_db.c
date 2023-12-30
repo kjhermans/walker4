@@ -38,8 +38,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
-void landscape_db_init
-  (wlandscape_t* ls, unsigned seed, int reset)
+void walker_db_init
+  (walker_t* w, unsigned seed, int reset)
 {
   char path[ 256 ];
   int openflags = O_RDWR|O_CREAT;
@@ -50,25 +50,46 @@ void landscape_db_init
     openflags |= O_TRUNC;
   }
   fprintf(stderr, "Walker::init Opening database at '%s'\n", path);
-  td_open(&(ls->cache.disk), path, 0, openflags, 0644);
+  td_open(&(w->db), path, 0, openflags, 0644);
 }
 
-void landscape_db_quadrant_store
-  (wlandscape_t* ls, wquadrant_t* q)
+struct wqkey {
+  uint32_t  discriminant;
+  int       qx;
+  int       qz;
+};
+
+static const uint32_t wqkeydiscriminant =
+  ('q' << 24) |
+  ('u' << 16) |
+  ('a' << 8) |
+  'd'
+;
+
+void walker_db_quadrant_store
+  (walker_t* w, wquadrant_t* q)
 {
-  int keydata[ 2 ] = { q->qx, q->qz };
-  tdt_t key = { keydata, sizeof(keydata) };
+  struct wqkey keydata = {
+    .discriminant = wqkeydiscriminant,
+    .qx = q->qx,
+    .qz = q->qz
+  };
+  tdt_t key = { &keydata, sizeof(keydata) };
   tdt_t val = { q, sizeof(wquadrant_t) };
 
-  td_put(&(ls->cache.disk), &key, &val, 0);
+  td_put(&(w->db), &key, &val, 0);
 }
 
-int landscape_db_quadrant_retrieve
-  (wlandscape_t* ls, wquadrant_t* q)
+int walker_db_quadrant_retrieve
+  (walker_t* w, wquadrant_t* q)
 {
-  int keydata[ 2 ] = { q->qx, q->qz };
-  tdt_t key = { keydata, sizeof(keydata) };
+  struct wqkey keydata = {
+    .discriminant = wqkeydiscriminant,
+    .qx = q->qx,
+    .qz = q->qz
+  };
+  tdt_t key = { &keydata, sizeof(keydata) };
   tdt_t val = { q, sizeof(wquadrant_t) };
 
-  return td_get(&(ls->cache.disk), &key, &val, 0);
+  return td_get(&(w->db), &key, &val, 0);
 }

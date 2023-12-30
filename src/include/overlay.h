@@ -27,6 +27,9 @@ void overlay_string_towhite
 void overlay_string
   (unsigned* buf, unsigned w, unsigned h, unsigned x, unsigned y, char* s);
 
+void overlay_set_callback
+  (void(*fnc)(void*,unsigned,int*isfilled,char*c,unsigned*amount), void* arg);
+
 MAKE_ARRAY_HEADER(text_object_t*, textobjlist_)
 
 text_object_t* overlay_add_textobject

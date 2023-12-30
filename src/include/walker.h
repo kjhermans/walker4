@@ -233,6 +233,11 @@ typedef struct
   }                         config;
   int                       show_help;
   int                       show_stats;
+  int                       show_inventory;
+  struct {
+    unsigned                  item;
+    unsigned                  amount;
+  }                         inventory[ 10 ];
 }
 walker_t;
 

@@ -75,6 +75,9 @@ void player_handle_keys
   } else if (pkb_key_pressed('d')) {
     w->show_stats = !(w->show_stats);
     text_object_set_visibility(w->display.overlay.stats, w->show_stats);
+  } else if (pkb_key_pressed('i')) {
+    w->show_inventory = !(w->show_inventory);
+    overlay_set_inventory(w->show_inventory);
   } else if (pkb_key_pressed('h')) {
     w->show_help = !(w->show_help);
     fprintf(stderr, "To toggle help, use 'h' again.\n");

@@ -307,6 +307,11 @@ void overlay_set_inventory
 
 /* declared in ./src/lib//overlay.c */
 extern
+void overlay_set_callback
+  (void(*fnc)(void*,unsigned,int*isfilled,char*c,unsigned*amount), void* arg);
+
+/* declared in ./src/lib//overlay.c */
+extern
 void overlay_set_flying
   (int f);
 
@@ -399,6 +404,11 @@ void walker_show
 extern
 void walker_run
   (walker_t* w);
+
+/* declared in ./src/lib//walker.c */
+extern
+void walker_inventory
+  (void* arg, unsigned i, int* isfilled, char* c, unsigned* amount);
 
 /* declared in ./src/lib//walker.c */
 extern

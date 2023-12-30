@@ -46,6 +46,7 @@ static char*           helptext =
   "space     Jump (when not flying)\n"
   "f         Access / leave flyer\n"
   "d         Show stats\n"
+  "i         Toggle inventory display\n"
   "Esc       Quit\n"
 ;
 
@@ -396,6 +397,19 @@ void walker_run
   sys_start();
 }
 
+void walker_inventory
+  (void* arg, unsigned i, int* isfilled, char* c, unsigned* amount)
+{
+  walker_t* w = arg;
+  if (w->inventory[ i ].amount == 0) {
+    *isfilled = 0;
+  } else {
+    *isfilled = 1;
+    *c = (char)(w->inventory[ i ].item);
+    *amount = w->inventory[ i ].amount;
+  }
+}
+
 /**
  *
  */
@@ -417,6 +431,9 @@ void walker_init
   w->display.overlay.help = overlay_add_textobject(20, 60, helptext);
   text_object_set_visibility(w->display.overlay.stats, 0); // todo
   text_object_set_visibility(w->display.overlay.help, 0);
+  overlay_set_callback(walker_inventory, w);
+  w->inventory[ 0 ].item = 'c';
+  w->inventory[ 0 ].amount = 10;
   flyers_init(&(w->world));
   player_init(&(w->world.player));
   t = t0 = tlast = time(0);

@@ -386,13 +386,37 @@ void overlay_set_inventory
 }
 
 static
+void(*overlay_inventory_callback)
+    (void*,unsigned,int*isfilled,char*c,unsigned*amount);
+
+static
+void* invarg;
+
+void overlay_set_callback
+  (void(*fnc)(void*,unsigned,int*isfilled,char*c,unsigned*amount), void* arg)
+{
+  overlay_inventory_callback = fnc;
+  invarg = arg;
+}
+
+static
 void overlay_draw_inventory
   (unsigned* buf, unsigned width, unsigned height)
 {
   unsigned x = (width - (10 * 32)) / 2;
   unsigned y = height - 40;
+  unsigned i;
+  int isfilled;
+  char c;
+  unsigned amount;
 
-  for (unsigned i=0; i < 10; i++) {
+  for (i=0; i < 10; i++) {
+    overlay_inventory_callback(invarg, i, &isfilled, &c, &amount);
+    if (isfilled) {
+      char amstr[ 32 ];
+      snprintf(amstr, sizeof(amstr), "%c\n%u", c, amount);
+      overlay_string(buf, width, height, x + (i*32) + 10, y + 12, amstr);
+    }
     for (unsigned j=0; j < 32; j++) {
       overlay_setpixel(buf, width, height, x + (i*32) + j, y);
     }
@@ -402,6 +426,9 @@ void overlay_draw_inventory
     for (unsigned j=0; j < 32; j++) {
       overlay_setpixel(buf, width, height, x + (i*32), y + j);
     }
+  }
+  for (unsigned j=0; j < 32; j++) {
+    overlay_setpixel(buf, width, height, x + (i*32), y + j);
   }
 }
 

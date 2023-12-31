@@ -237,7 +237,7 @@ void flyer_init
   (wobject_t* o)
 {
   memset(o, 0, sizeof(*o));
-  o->type = WOBJTYPE_FLYER;
+  o->type = WOBJTYPE_AFLYER;
   o->id = object_get_id();
   o->update = flyer_update;
   o->draw = flyer_draw;

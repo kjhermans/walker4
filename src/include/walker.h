@@ -101,7 +101,9 @@ struct wobject
 {
   unsigned                  id;
 
-#define WOBJTYPE_FLYER      1
+#define WOBJTYPE_PLAYER     0
+#define WOBJTYPE_PFLYER     1 // player flyer
+#define WOBJTYPE_AFLYER     2 // adversarial flyer
   unsigned                  type;
 
 #define WOBJFLAG_VISIBLE    (1<<0)
@@ -124,6 +126,7 @@ struct wobject
 
   union {
     struct {
+      int                       adversarial;
       float                     rotxz;
       float                     rotyz;
     }                         flyer;

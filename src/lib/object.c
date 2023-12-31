@@ -49,8 +49,10 @@ void object_init
   (wobject_t* o, unsigned type)
 {
   switch (type) {
-  case WOBJTYPE_FLYER:
+  case WOBJTYPE_PFLYER:
+  case WOBJTYPE_AFLYER:
     flyer_init(o);
+    o->type = type;
     break;
   }
 }

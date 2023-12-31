@@ -447,8 +447,9 @@ void walker_init
   overlay_set_callback(walker_inventory, w);
   w->world.player.inventory[ 0 ].item = 'c';
   w->world.player.inventory[ 0 ].amount = 10;
-  player_init(&(w->world.player));
-  flyer_init(&(w->world.player.flyer));
+  walker_objects_load(w);
+  //player_init(&(w->world.player));
+  //flyer_init(&(w->world.player.flyer));
   t = t0 = tlast = time(0);
 }
 

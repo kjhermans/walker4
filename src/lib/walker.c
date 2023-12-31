@@ -339,15 +339,21 @@ void display
 
   for (unsigned i=0; i < wglobal->world.objects.count; i++) {
     wobject_t* o = wobjectlist_getptr(&(wglobal->world.objects), i);
-    o->draw(
-      o,
-      wglobal,
-      (pt2d_t){
-        .x = wglobal->world.player.object.position.x,
-        .z = wglobal->world.player.object.position.z
-      },
-      vision
-    );
+    if (o->flags & WOBJFLAG_VISIBLE
+        && o->cache.tile.x >= vision.o.x
+        && o->cache.tile.x <= vision.d.x
+        && o->cache.tile.z >= vision.o.z
+        && o->cache.tile.z <= vision.d.z)
+    {
+      o->draw(
+        o,
+        wglobal,
+        (pt2d_t){
+          .x = wglobal->world.player.object.position.x,
+          .z = wglobal->world.player.object.position.z
+        }
+      );
+    }
   }
 
   flyers_draw(

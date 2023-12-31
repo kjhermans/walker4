@@ -29,10 +29,15 @@ superclean: clean
 	    make -C $$DIR superclean; \
 	  done
 
-archive: superclean
+archive:
 	RELEASE=$$(cat release); \
 	/bin/echo "  [TAR] ~/walker4-src-$$RELEASE.tar.gz"; \
 	cd .. && \
+	  rm -rf /tmp/walker4 && \
+	  cp -rf walker4/ /tmp/ && \
+	  cd /tmp/walker4 && \
+	  make superclean && \
+	  cd .. && \
 	  tar czf ~/walker4-src-$$RELEASE.tar.gz \
 	  --exclude=\.git walker4/
 

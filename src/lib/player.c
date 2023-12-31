@@ -102,19 +102,19 @@ void player_flying
   if (p->object.flags & WOBJFLAG_FLYING) {
     if (p->object.cache.ground.supported) {
       p->object.flags &= ~(WOBJFLAG_FLYING);
-      p->flyer.object.position = p->object.position;
-      p->flyer.object.flags |= WOBJFLAG_VISIBLE;
+      p->flyer.position = p->object.position;
+      p->flyer.flags |= WOBJFLAG_VISIBLE;
       overlay_set_flying(0);
       walker_warn(w, "You have dismounted your flyer.");
     } else {
       walker_warn(w, "You have to be grounded to dismount your flyer.");
     }
   } else {
-    int dx = p->object.position.x - p->flyer.object.position.x;
-    int dz = p->object.position.z - p->flyer.object.position.z;
+    int dx = p->object.position.x - p->flyer.position.x;
+    int dz = p->object.position.z - p->flyer.position.z;
     int d = sqrt(dx*dx + dz*dz);
     if (d < 2 * WTILESIZE) {
-      p->flyer.object.flags &= ~(WOBJFLAG_VISIBLE);
+      p->flyer.flags &= ~(WOBJFLAG_VISIBLE);
       p->object.flags |= WOBJFLAG_FLYING;
       overlay_set_flying(1);
       walker_warn(w, "You have mounted your flyer.");
@@ -160,9 +160,9 @@ void player_init
   p->object.position.x = WQUADRANT_DIMENSION * WTILESIZE / 2;
   p->object.position.y = 4096;
   p->object.position.z = WQUADRANT_DIMENSION * WTILESIZE / 2;
-  p->flyer.object.flags |= WOBJFLAG_VISIBLE;
-  p->flyer.object.position.x = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
-  p->flyer.object.position.y = 4096;
-  p->flyer.object.position.z = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
-  p->flyer.object.flags &= ~(WOBJFLAG_FLYING);
+  p->object.flags &= ~(WOBJFLAG_FLYING);
+  p->flyer.flags |= WOBJFLAG_VISIBLE;
+  p->flyer.position.x = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
+  p->flyer.position.y = 4096;
+  p->flyer.position.z = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
 }

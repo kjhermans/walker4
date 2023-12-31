@@ -122,8 +122,7 @@ void walker_update
 
   player_handle_keys(&(w->world.player), wglobal, 0);
   player_update(&(w->world.player), &(w->world.landscape));
-  flyers_update(&(wglobal->world));
-  flyer_update(&(wglobal->world), &(wglobal->world.player.flyer));
+  flyer_update(&(wglobal->world.player.flyer), wglobal);
 
   for (unsigned i=0; i < w->world.objects.count; i++) {
     wobject_t* o = wobjectlist_getptr(&(w->world.objects), i);
@@ -339,37 +338,13 @@ void display
 
   for (unsigned i=0; i < wglobal->world.objects.count; i++) {
     wobject_t* o = wobjectlist_getptr(&(wglobal->world.objects), i);
-    if (o->flags & WOBJFLAG_VISIBLE
-        && o->cache.tile.x >= vision.o.x
-        && o->cache.tile.x <= vision.d.x
-        && o->cache.tile.z >= vision.o.z
-        && o->cache.tile.z <= vision.d.z)
-    {
-      o->draw(
-        o,
-        wglobal,
-        (pt2d_t){
-          .x = wglobal->world.player.object.position.x,
-          .z = wglobal->world.player.object.position.z
-        }
-      );
-    }
+    object_draw(o, wglobal, &(wglobal->world.player), vision);
   }
-
-  flyers_draw(
-    &(wglobal->world),
-    (pt2d_t){
-      .x = wglobal->world.player.object.position.x,
-      .z = wglobal->world.player.object.position.z
-    },
-    &vision
-  );
-  flyer_draw(
+  object_draw(
     &(wglobal->world.player.flyer),
-    wglobal->world.player.flyer.object.position.x - 
-      wglobal->world.player.object.position.x,
-    wglobal->world.player.flyer.object.position.z - 
-      wglobal->world.player.object.position.z
+    wglobal,
+    &(wglobal->world.player),
+    vision
   );
 
   if (clk_sample() > fpsclock) {
@@ -429,12 +404,12 @@ void walker_inventory
   (void* arg, unsigned i, int* isfilled, char* c, unsigned* amount)
 {
   walker_t* w = arg;
-  if (w->inventory[ i ].amount == 0) {
+  if (w->world.player.inventory[ i ].amount == 0) {
     *isfilled = 0;
   } else {
     *isfilled = 1;
-    *c = (char)(w->inventory[ i ].item);
-    *amount = w->inventory[ i ].amount;
+    *c = (char)(w->world.player.inventory[ i ].item);
+    *amount = w->world.player.inventory[ i ].amount;
   }
 }
 
@@ -470,10 +445,10 @@ void walker_init
   text_object_set_visibility(w->display.overlay.stats, 0); // todo
   text_object_set_visibility(w->display.overlay.help, 0);
   overlay_set_callback(walker_inventory, w);
-  w->inventory[ 0 ].item = 'c';
-  w->inventory[ 0 ].amount = 10;
-  flyers_init(&(w->world));
+  w->world.player.inventory[ 0 ].item = 'c';
+  w->world.player.inventory[ 0 ].amount = 10;
   player_init(&(w->world.player));
+  flyer_init(&(w->world.player.flyer));
   t = t0 = tlast = time(0);
 }
 

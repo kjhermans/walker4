@@ -17,28 +17,18 @@ int absorb_file
 
 /* declared in ./src/lib//flyers.c */
 extern
-void flyers_init
-  (wworld_t* w);
-
-/* declared in ./src/lib//flyers.c */
-extern
 void flyer_update
-  (wworld_t* w, wflyer_t* f);
-
-/* declared in ./src/lib//flyers.c */
-extern
-void flyers_update
-  (wworld_t* w);
+  (wobject_t* o, walker_t* w);
 
 /* declared in ./src/lib//flyers.c */
 extern
 void flyer_draw
-  (wflyer_t* f, int x, int z);
+  (wobject_t* o, walker_t* w, pt2d_t p);
 
 /* declared in ./src/lib//flyers.c */
 extern
-void flyers_draw
-  (wworld_t* w, pt2d_t relative, vec2d_t* vision);
+void flyer_init
+  (wobject_t* o);
 
 /* declared in ./src/lib//fnv.c */
 extern
@@ -157,6 +147,22 @@ void landscape_tile2quadrant
 extern
 void landscape_tile_debug
   (wtile_t* tile);
+
+/* declared in ./src/lib//object.c */
+extern
+unsigned object_get_id
+  ()
+  __attribute__ ((warn_unused_result));
+
+/* declared in ./src/lib//object.c */
+extern
+void object_init
+  (wobject_t* o, unsigned type);
+
+/* declared in ./src/lib//object.c */
+extern
+void object_draw
+  (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision);
 
 /* declared in ./src/lib//object.c */
 extern
@@ -436,6 +442,15 @@ extern
 int walker_db_object_retrieve
   (walker_t* w, wobject_t* o)
   __attribute__ ((warn_unused_result));
+
+/* declared in ./src/lib//walker_db.c */
+extern
+void walker_db_object_iterate
+  (
+    walker_t* w,
+    void(*fnc)(walker_t*w,wobject_t*,void*),
+    void* arg
+  );
 
 
 

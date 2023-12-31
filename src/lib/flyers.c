@@ -198,81 +198,48 @@ struct PL_OBJ obj = {
   .n_polys = 8
 };
 
-void flyers_init
-  (wworld_t* w)
-{
-  for (int i=0; i < 10; i++) {
-    wflyer_t f = {
-      .object.flags = WOBJFLAG_VISIBLE|WOBJFLAG_FLYING,
-      .object.position.x = ((i-5) * 200),
-      .object.position.y = 1000,
-      .object.position.z = 0,
-      .object.oxz = 0,
-      .object.oyz = 0,
-      .object.speed_vert = 0,
-      .object.speed_hor = 1
-    };
-    wflyerlist_push(&(w->flyers), f);
-  }
-}
-
 void flyer_update
-  (wworld_t* w, wflyer_t* f)
+  (wobject_t* o, walker_t* w)
 {
   (void)w;
 
-  if (f->rotxz > 0) {
-    f->object.oxz += .2;
-    f->rotxz -= .2;
+  if (o->subtype.flyer.rotxz > 0) {
+    o->oxz += .2;
+    o->subtype.flyer.rotxz -= .2;
   } else if ((rand() % 16) == 0) {
-    f->rotxz = ((float)(rand() % 16)) / WPI;
+    o->subtype.flyer.rotxz = ((float)(rand() % 16)) / WPI;
   }
-  if (f->rotyz > 0) {
-    f->object.oyz += .2;
-    f->rotyz -= .2;
+  if (o->subtype.flyer.rotyz > 0) {
+    o->oyz += .2;
+    o->subtype.flyer.rotyz -= .2;
   } else if ((rand() % 16) == 0) {
-    f->rotyz = ((float)(rand() % 16)) / WPI;
+    o->subtype.flyer.rotyz = ((float)(rand() % 16)) / WPI;
   }
-  object_gravity(&(f->object));
-  object_friction(&(f->object));
-  int moved = object_move(&(f->object), &(w->landscape)); (void)moved;
-}
-
-void flyers_update
-  (wworld_t* w)
-{
-  for (unsigned i=0; i < w->flyers.count; i++) {
-    wflyer_t* f = wflyerlist_getptr(&(w->flyers), i);
-    flyer_update(w, f);
-  }
+  object_gravity(o);
+  object_friction(o);
+  int moved = object_move(o, &(w->world.landscape)); (void)moved;
 }
 
 void flyer_draw
-  (wflyer_t* f, int x, int z)
+  (wobject_t* o, walker_t* w, pt2d_t p)
 {
-  if (f->object.flags & WOBJFLAG_VISIBLE) {
-    PL_mst_push();
-    PL_mst_translate(x, f->object.position.y, z);
-    PL_mst_rotatex((int)(f->object.oyz / PL_RAD256));
-    PL_mst_rotatey((int)(f->object.oxz / PL_RAD256));
-    PL_render_object(&obj);
-    PL_mst_pop();
-  }
+  (void)w;
+
+  PL_mst_push();
+  PL_mst_translate(p.x, o->position.y, p.z);
+  PL_mst_rotatex((int)(o->oyz / PL_RAD256));
+  PL_mst_rotatey((int)(o->oxz / PL_RAD256));
+  PL_render_object(&obj);
+  PL_mst_pop();
 }
 
-void flyers_draw
-  (wworld_t* w, pt2d_t relative, vec2d_t* vision)
+void flyer_init
+  (wobject_t* o)
 {
-  for (unsigned i=0; i < w->flyers.count; i++) {
-    wflyer_t* f = wflyerlist_getptr(&(w->flyers), i);
-    if (f->object.cache.tile.x >= vision->o.x
-        && f->object.cache.tile.x <= vision->d.x
-        && f->object.cache.tile.z >= vision->o.z
-        && f->object.cache.tile.z <= vision->d.z)
-    {
-      int dx = f->object.position.x - relative.x;
-      int dz = f->object.position.z - relative.z;
-      flyer_draw(f, dx, dz);
-    }
-  }
+  memset(o, 0, sizeof(*o));
+  o->type = WOBJTYPE_FLYER;
+  o->id = object_get_id();
+  o->update = flyer_update;
+  o->draw = flyer_draw;
+  o->flags |= WOBJFLAG_FLYING|WOBJFLAG_VISIBLE;
 }

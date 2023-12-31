@@ -37,6 +37,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ARRAY_EQUALS(a,b) (a.id == b.id)
 MAKE_ARRAY_CODE(wobject_t, wobjectlist_)
 
+unsigned idctr = 0;
+
+unsigned object_get_id
+  ()
+{
+  return ++idctr;
+}
+
+void object_init
+  (wobject_t* o, unsigned type)
+{
+  switch (type) {
+  case WOBJTYPE_FLYER:
+    flyer_init(o);
+    break;
+  }
+}
+
+void object_draw
+  (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision)
+{
+  if (o->flags & WOBJFLAG_VISIBLE
+      && o->cache.tile.x >= vision.o.x
+      && o->cache.tile.x <= vision.d.x
+      && o->cache.tile.z >= vision.o.z
+      && o->cache.tile.z <= vision.d.z)
+  {
+    o->draw(
+      o,
+      w,
+      (pt2d_t){
+        .x = o->position.x - p->object.position.x,
+        .z = o->position.z - p->object.position.z
+      }
+    );
+  }
+}
+
 /**
  * Applies gravity to the object, that is: increase downward velocity,
  * when the object is not flying and is not on solid ground.

@@ -460,3 +460,14 @@ void walker_warn
   w->display.overlay.warn_timeout = 64;
 }
 
+void walker_on_exit
+  ()
+{
+  for (unsigned i=0; i < wglobal->world.objects.count; i++) {
+    wobject_t* o = wobjectlist_getptr(&(wglobal->world.objects), i);
+    walker_db_object_store(wglobal, o);
+  }
+  walker_db_object_store(wglobal, &(wglobal->world.player.object));
+  walker_db_object_store(wglobal, &(wglobal->world.player.flyer));
+  fprintf(stderr, "Walker::OnExit. Saved all objects.\n");
+}

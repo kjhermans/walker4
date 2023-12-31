@@ -45,6 +45,7 @@ void player_handle_keys
 
   if (pkb_key_pressed(FW_KEY_ESCAPE)) {
     fprintf(stderr, "Walker::Shutdown\n");
+    walker_on_exit();
     sys_shutdown();
   } else if (pkb_key_held(FW_KEY_ARROW_RIGHT)) {
     object_turnright(&(p->object), PLAYER_TURNRATE);

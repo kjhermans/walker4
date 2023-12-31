@@ -416,6 +416,11 @@ extern
 void walker_warn
   (walker_t* w, char* str);
 
+/* declared in ./src/lib//walker.c */
+extern
+void walker_on_exit
+  ();
+
 /* declared in ./src/lib//walker_db.c */
 extern
 void walker_db_init

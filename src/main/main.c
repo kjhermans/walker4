@@ -31,7 +31,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * \brief
  */
 
+#include <signal.h>
+
 #include <walker.h>
+
+void exitsighandler
+  (int signum)
+{
+  fprintf(stderr, "Caught signal %d\n", signum);
+  walker_on_exit();
+}
 
 int main
   (int argc, char* argv[])
@@ -69,6 +78,8 @@ int main
     );
     exit(0);
   }
+  signal(SIGINT, exitsighandler);
+  signal(SIGTERM, exitsighandler);
   walker_init(&w, (seedstring ? &seed : 0), reset);
   walker_configure(&w, configfile);
   walker_show(&w, argc, argv);

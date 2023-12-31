@@ -34,9 +34,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 
 #include "walker.h"
-#undef ARRAY_EQUALS
-#define ARRAY_EQUALS(a,b) (0 == memcmp(&a,&b,sizeof(a)))
-MAKE_ARRAY_CODE(wflyer_t, wflyerlist_)
 
 #define FWIDTH 64
 #define FPAUSE 8

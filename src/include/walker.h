@@ -114,22 +114,21 @@ struct wobject
   int                       speed_hor;  /* ground speed (positive is forward)*/
 
   void(*                    update)(wobject_t*, walker_t*);
-  void(*                    draw)(wobject_t*, walker_t*, pt2d_t, vec2d_t);
+  void(*                    draw)(wobject_t*, walker_t*, pt2d_t);
 
   struct {
     pt2d_t                    tile;
     pt2d_t                    quadrant;
     wground_t                 ground;
   }                         cache;
-};
 
-typedef struct
-{
-  wobject_t                 object;
-  float                     rotxz;
-  float                     rotyz;
-}
-wflyer_t;
+  union {
+    struct {
+      float                     rotxz;
+      float                     rotyz;
+    }                         flyer;
+  }                         subtype;
+};
 
 #define PLAYER_START_PX     0
 #define PLAYER_START_PZ     0
@@ -140,7 +139,11 @@ wflyer_t;
 typedef struct
 {
   wobject_t                 object;
-  wflyer_t                  flyer;
+  wobject_t                 flyer;
+  struct {
+    unsigned                  item;
+    unsigned                  amount;
+  }                         inventory[ 10 ];
 }
 wplayer_t;
 
@@ -207,14 +210,12 @@ typedef struct
 wlandscape_t;
 
 #include <array.h>
-MAKE_ARRAY_HEADER(wflyer_t, wflyerlist_)
 MAKE_ARRAY_HEADER(wobject_t, wobjectlist_)
 
 typedef struct
 {
   wobject_t                 viewport;
   wplayer_t                 player;
-  wflyerlist_t              flyers;
   wobjectlist_t             objects;
   wlandscape_t              landscape;
 }
@@ -252,10 +253,6 @@ struct walker
   int                       show_help;
   int                       show_stats;
   int                       show_inventory;
-  struct {
-    unsigned                  item;
-    unsigned                  amount;
-  }                         inventory[ 10 ];
 };
 
 #include <inttypes.h>

@@ -130,9 +130,46 @@ int walker_db_object_retrieve
   tdt_t val = { o, sizeof(wobject_t) };
 
   if (td_get(&(w->db), &key, &val, 0) == 0) {
-    //.. reposition the callbacks for update and draw withing o->
+    //.. repair o for o->methods according to type
     return 0;
   } else {
     return ~0;
+  }
+}
+
+void walker_db_object_iterate
+  (
+    walker_t* w,
+    void(*fnc)(walker_t*w,wobject_t*,void*),
+    void* arg
+  )
+{
+  wobject_t o;
+  struct wokey keydata = {
+    .discriminant = wokeydiscriminant,
+    .objectid = 0
+  };
+  tdt_t key = {
+    &keydata,
+    sizeof(keydata)
+  };
+  tdt_t val = {
+    &o,
+    sizeof(o)
+  };
+  tdc_t cursor = TDC_INIT(&(w->db));
+
+  tdc_mov(&cursor, &key, TDCFLG_PARTIAL);
+  while (1) {
+    key.size = sizeof(keydata);
+    val.size = sizeof(o);
+    if (tdc_nxt(&cursor, &key, &val, 0)) {
+      break;
+    }
+    if (keydata.discriminant != wokeydiscriminant) {
+      break;
+    }
+    //.. repair o for o->methods according to type
+    fnc(w, &o, arg);
   }
 }

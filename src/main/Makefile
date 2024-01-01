@@ -1,5 +1,5 @@
 INCLIBS=-I../include -I../PL3D-KC -I../sdbm_tree
-CFLAGS=-g -Wall -Wextra $(DEBUG) $(INCLIBS)
+CFLAGS=-g -Wall -Wextra $(DEBUG) $(INCLIBS) $(PROFILE)
 LINKABLES=\
   main.o \
   ../PL3D-KC/bin/libpl.o \
@@ -11,7 +11,7 @@ LINKABLES=\
 all: walker
 
 walker: $(LINKABLES)
-	$(CC) -o walker $(LINKABLES) \
+	$(CC) -o walker $(LINKABLES) $(PROFILE) \
 	  -lX11 -lXext \
 	  -lm \
 

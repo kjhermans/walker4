@@ -4,6 +4,9 @@ all: funcheaders
 debug:	
 	make all DEBUG="-D_DEBUG=1"
 
+profile:
+	make all PROFILE="-pg"
+
 funcheaders: src/include/walker_functions.h
 
 src/include/walker_functions.h: src/lib/*.c

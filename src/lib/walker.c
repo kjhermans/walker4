@@ -204,13 +204,16 @@ void display
   const int tod = ((t - t0) / t_cycle) % t_bgswitch;
   const unsigned* rgb_back = t_background[ tod ];
 
-  /* clear viewport */
-  PL_clear_vp(rgb_back[ 0 ], rgb_back[ 1 ], rgb_back[ 2 ]);
-
-  if (rgb_back[ 3 ]) {
-    set_fade_to_white(1);
-  } else {
+  if (wglobal->world.player.object.position.y < 512) {
+    PL_clear_vp(0, 0, 32);
     set_fade_to_white(0);
+  } else {
+    PL_clear_vp(rgb_back[ 0 ], rgb_back[ 1 ], rgb_back[ 2 ]);
+    if (!rgb_back[ 3 ]) {
+      set_fade_to_white(0);
+    } else {
+      set_fade_to_white(1);
+    }
   }
 
   PL_polygon_count = 0;

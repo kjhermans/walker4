@@ -116,8 +116,9 @@ struct wobject
 #define WOBJTYPE_AFLYER     2 // adversarial flyer
   unsigned                  type;
 
-#define WOBJFLAG_VISIBLE    (1<<0)
-#define WOBJFLAG_FLYING     (1<<1)
+#define WOBJFLAG_INITIALIZED (1<<0)
+#define WOBJFLAG_VISIBLE     (1<<1)
+#define WOBJFLAG_FLYING      (1<<2)
   unsigned                  flags;
 
   pt3d_t                    position;   /* high res position ('pixels') */

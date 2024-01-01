@@ -74,7 +74,7 @@ void player_handle_keys
     if (p->object.flags & WOBJFLAG_FLYING) {
        p->object.flags &= ~(WOBJFLAG_FLYING);
     } else {
-       p->object.flags != (WOBJFLAG_FLYING);
+       p->object.flags |= (WOBJFLAG_FLYING);
     }
 #endif
   } else if (pkb_key_pressed('d')) {

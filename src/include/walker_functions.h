@@ -28,7 +28,7 @@ void flyer_draw
 /* declared in ./src/lib//flyers.c */
 extern
 void flyer_init
-  (wobject_t* o);
+  (wobject_t* o, int type);
 
 /* declared in ./src/lib//fnv.c */
 extern

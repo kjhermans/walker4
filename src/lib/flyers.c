@@ -234,12 +234,13 @@ void flyer_draw
 }
 
 void flyer_init
-  (wobject_t* o)
+  (wobject_t* o, int type)
 {
-  memset(o, 0, sizeof(*o));
-  o->type = WOBJTYPE_AFLYER;
-  o->id = object_get_id();
   o->update = flyer_update;
   o->draw = flyer_draw;
-  o->flags |= WOBJFLAG_FLYING|WOBJFLAG_VISIBLE;
+  if (!(o->flags & WOBJFLAG_INITIALIZED)) {
+    o->flags = WOBJFLAG_VISIBLE;
+    o->type = type;
+    o->id = object_get_id();
+  }
 }

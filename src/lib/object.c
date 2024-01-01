@@ -51,15 +51,29 @@ void object_init
   switch (type) {
   case WOBJTYPE_PFLYER:
   case WOBJTYPE_AFLYER:
-    flyer_init(o);
+    flyer_init(o, type);
     o->type = type;
+    if (!(o->id)) {
+      o->id = object_get_id();
+    }
     break;
+  default:
+    fprintf(stderr, "Unknown object type %u.\n", type);
+    o->draw = NULL;
+    o->update = NULL;
   }
+  o->flags |= WOBJFLAG_INITIALIZED;
 }
 
 void object_draw
   (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision)
 {
+if (o->draw == NULL) { object_debug(o); }
+  ASSERT(o)
+  ASSERT(o->draw)
+  ASSERT(w)
+  ASSERT(p)
+
   if (o->flags & WOBJFLAG_VISIBLE
       && o->cache.tile.x >= vision.o.x
       && o->cache.tile.x <= vision.d.x
@@ -250,7 +264,9 @@ void object_get_vision
 void object_debug
   (wobject_t* o)
 {
-  fprintf(stderr, "Object: pos:%d,%d,%d, or:%f,%f, spd:%d,%d fl:%d, sup:%d\n",
+  fprintf(stderr,
+    "Object: id:%u, typ:%d, pos:%d,%d,%d, or:%f,%f, spd:%d,%d fl:%d, sup:%d\n",
+    o->id, o->type,
     o->position.x, o->position.y, o->position.z, 
     o->oxz, o->oyz,
     o->speed_hor, o->speed_vert,

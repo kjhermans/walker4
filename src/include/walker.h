@@ -39,6 +39,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sdbm_tree/td.h>
 #include <inttypes.h>
 
+#ifdef _DEBUG
+#define ASSERT(cnd) \
+{ if (!(cnd)) { \
+  fprintf(stderr, "Assertion '%s' failed at %s:%d\n", \
+    #cnd, __FILE__, __LINE__); \
+}}
+#else
+#define ASSERT(exp)
+#endif
+
 typedef struct walker walker_t;
 
 #define WPI 3.141592

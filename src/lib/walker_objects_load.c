@@ -1,0 +1,91 @@
+/**
+ * This file is part of Walker, a game.
+
+Copyright (c) 2023, Kees-Jan Hermans <kees.jan.hermans@gmail.com>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the organization nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL Kees-Jan Hermans BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ *
+ * \file
+ * \brief
+ */
+
+#include "walker.h"
+
+struct ol
+{
+  int player_seen;
+  int player_flyer_seen;
+  unsigned nflyers;
+  unsigned maxid;
+};
+
+static
+void walker_load_object
+  (walker_t* w, wobject_t* o, void* arg)
+{
+  struct ol* ol = arg;
+
+  fprintf(stderr, "Walker::init Loaded ");
+  object_debug(o);
+  o->draw = NULL;
+  o->update = NULL;
+  if (o->id > ol->maxid) {
+    ol->maxid = o->id;
+  }
+  switch (o->type) {
+  case WOBJTYPE_PLAYER:
+    ol->player_seen = 1;
+    w->world.player.object = *o;
+    break;
+  case WOBJTYPE_PFLYER:
+    object_init(o, o->type);
+    ol->player_flyer_seen = 1;
+    w->world.player.flyer = *o;
+    break;
+  case WOBJTYPE_AFLYER:
+    ++(ol->nflyers);
+    object_init(o, o->type);
+    wobjectlist_push(&(w->world.objects), *o);
+    break;
+  }
+}
+
+/**
+ *
+ */
+void walker_objects_load
+  (walker_t* w)
+{
+  struct ol ol = { 0 };
+  walker_db_object_iterate(w, walker_load_object, &ol);
+  if (!(ol.player_seen)) {
+    fprintf(stderr, "Walker::init Newly create player.\n");
+    player_init(&(w->world.player));
+  }
+  if (!(ol.player_flyer_seen)) {
+    fprintf(stderr, "Walker::init Newly create player flyer.\n");
+    flyer_init(&(w->world.player.flyer), WOBJTYPE_PFLYER);
+  }
+}

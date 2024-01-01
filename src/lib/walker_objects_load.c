@@ -83,6 +83,14 @@ void walker_objects_load
   if (!(ol.player_seen)) {
     fprintf(stderr, "Walker::init Newly create player.\n");
     player_init(&(w->world.player));
+  } else {
+    int tx, tz;
+    int qx, qz;
+    landscape_pos2tile(w->world.player.object.position.x,
+                       w->world.player.object.position.z,
+                       &tx, &tz);
+    landscape_tile2quadrant(tx, tz, &qx, &qz, 0, 0);
+    landscape_cache_update(&(w->world.landscape), qx-1, qz-1);
   }
   if (!(ol.player_flyer_seen)) {
     fprintf(stderr, "Walker::init Newly create player flyer.\n");

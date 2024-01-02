@@ -67,7 +67,7 @@ void walker_god
         o.flags |= WOBJFLAG_FLYING;
         o.position.y = 3000;
         o.oxz = ((float)rand() / RAND_MAX) * WPI * 2;
-        o.speed_hor = 20;
+        o.speed_hor = 30;
         o.subtype.flyer.circle = 1 / ((float)(rand() % 1000) + 1);
         wobjectlist_push(&(w->world.objects), o);
       }

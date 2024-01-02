@@ -70,6 +70,8 @@ void player_handle_keys
 #ifdef _DEBUG
   } else if (pkb_key_pressed('b')) {
     p->object.speed_hor = 0;
+  } else if (pkb_key_pressed('l')) {
+    p->object.oyz = 0;
   } else if (pkb_key_pressed('a')) {
     if (p->object.flags & WOBJFLAG_FLYING) {
        p->object.flags &= ~(WOBJFLAG_FLYING);

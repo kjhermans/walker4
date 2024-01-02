@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "overlay.h"
 
@@ -8,6 +9,9 @@ int inventory = 0;
 
 static
 int flying = 0;
+
+static
+int redlamp = 0;
 
 static
 unsigned char font[95][13] = {
@@ -107,6 +111,22 @@ unsigned char font[95][13] = {
 {0x00, 0x00, 0xf0, 0x18, 0x18, 0x18, 0x1c, 0x0f, 0x1c, 0x18, 0x18, 0x18, 0xf0},
 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x8f, 0xf1, 0x60, 0x00, 0x00, 0x00}
 };
+
+void overlay_setpixel_color
+  (
+    unsigned* buf,
+    unsigned width,
+    unsigned height,
+    unsigned x,
+    unsigned y,
+    unsigned color
+  )
+{
+  if (y >= height || x >= width) {
+    return;
+  }
+  buf[ (width*y) + x ] = color;
+}
 
 void overlay_setpixel
   (unsigned* buf, unsigned width, unsigned height, unsigned x, unsigned y)
@@ -438,6 +458,27 @@ void overlay_set_flying
   flying = f;
 }
 
+void overlay_set_redlamp
+  (int r)
+{
+  redlamp = r;
+}
+
+void overlay_draw_redlamp
+  (unsigned* buf, unsigned width, unsigned height)
+{
+  for (unsigned i=0; i < 16; i++) {
+    for (unsigned j=0; j < 16; j++) {
+      overlay_setpixel_color(
+        buf, width, height,
+        width + i - 32,
+        j + 16,
+        0xff0000
+      );
+    }
+  }
+}
+
 void overlay
   (unsigned* buf, unsigned width, unsigned height)
 {
@@ -460,6 +501,11 @@ void overlay
   }
   if (inventory) {
     overlay_draw_inventory(buf, width, height);
+  }
+  if (redlamp) {
+    if (time(0) % 2) {
+      overlay_draw_redlamp(buf, width, height);
+    }
   }
 }
 

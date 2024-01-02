@@ -255,6 +255,9 @@ struct walker
       unsigned                  warn_timeout;
       text_object_t*            help;
     }                         overlay;
+    int                       show_help;
+    int                       show_stats;
+    int                       show_inventory;
   }                         display;
   json_t*                   json;
   struct {
@@ -264,9 +267,6 @@ struct walker
       char                      jump;
     }                         keybindings;
   }                         config;
-  int                       show_help;
-  int                       show_stats;
-  int                       show_inventory;
 };
 
 #include <inttypes.h>

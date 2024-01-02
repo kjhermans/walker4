@@ -222,6 +222,18 @@ void object_debug
 
 /* declared in ./src/lib//overlay.c */
 extern
+void overlay_setpixel_color
+  (
+    unsigned* buf,
+    unsigned width,
+    unsigned height,
+    unsigned x,
+    unsigned y,
+    unsigned color
+  );
+
+/* declared in ./src/lib//overlay.c */
+extern
 void overlay_setpixel
   (unsigned* buf, unsigned width, unsigned height, unsigned x, unsigned y);
 
@@ -304,6 +316,16 @@ void overlay_set_callback
 extern
 void overlay_set_flying
   (int f);
+
+/* declared in ./src/lib//overlay.c */
+extern
+void overlay_set_redlamp
+  (int r);
+
+/* declared in ./src/lib//overlay.c */
+extern
+void overlay_draw_redlamp
+  (unsigned* buf, unsigned width, unsigned height);
 
 /* declared in ./src/lib//overlay.c */
 extern

@@ -216,6 +216,12 @@ void display
     }
   }
 
+  if (wglobal->world.player.object.position.y > 3000) {
+    overlay_set_redlamp(1);
+  } else {
+    overlay_set_redlamp(0);
+  }
+
   PL_polygon_count = 0;
     
   /* define camera orientation */

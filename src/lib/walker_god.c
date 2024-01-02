@@ -98,6 +98,11 @@ void walker_god
           f->oxz += (2 * WPI);
         }
       }
+      if (f->position.y < w->world.player.object.position.y) {
+        f->oyz = .01;
+      } else if (f->position.y > w->world.player.object.position.y) {
+        f->oyz = (2 * WPI) - .01;
+      }
     }
   }
 }

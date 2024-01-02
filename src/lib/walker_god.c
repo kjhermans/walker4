@@ -80,7 +80,7 @@ void walker_god
       wobjptrlist_get(&(w->world.god.flyers), i, &f);
       int dx = w->world.player.object.position.x - f->position.x;
       int dz = w->world.player.object.position.z - f->position.z;
-      if (dx == 0 || dz == 0) {
+      if ((dx > -1000 && dx < 1000) || (dz > -1000 && dz < 1000)) {
         continue;
       } else {
         double a = (double)dz/(double)dx;

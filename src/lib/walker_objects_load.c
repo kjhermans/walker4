@@ -58,6 +58,9 @@ void walker_load_object
   case WOBJTYPE_PLAYER:
     ol->player_seen = 1;
     w->world.player.object = *o;
+    if (o->flags & WOBJFLAG_FLYING) {
+      overlay_set_flying(1);
+    }
     break;
   case WOBJTYPE_PFLYER:
     object_init(o, o->type);

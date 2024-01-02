@@ -228,6 +228,9 @@ wlandscape_t;
 
 #include <array.h>
 MAKE_ARRAY_HEADER(wobject_t, wobjectlist_)
+MAKE_ARRAY_HEADER(wobject_t*, wobjptrlist_)
+
+#define GOD_MIN_FLYERS      16
 
 typedef struct
 {
@@ -235,6 +238,9 @@ typedef struct
   wplayer_t                 player;
   wobjectlist_t             objects;
   wlandscape_t              landscape;
+  struct {
+    wobjptrlist_t             flyers;
+  }                         god;
 }
 wworld_t;
 

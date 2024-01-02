@@ -123,6 +123,7 @@ void walker_update
   player_handle_keys(&(w->world.player), wglobal, 0);
   player_update(&(w->world.player), &(w->world.landscape));
   flyer_update(&(wglobal->world.player.flyer), wglobal);
+  walker_god(wglobal);
 
   for (unsigned i=0; i < w->world.objects.count; i++) {
     wobject_t* o = wobjectlist_getptr(&(w->world.objects), i);

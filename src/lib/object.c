@@ -37,6 +37,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ARRAY_EQUALS(a,b) (a.id == b.id)
 MAKE_ARRAY_CODE(wobject_t, wobjectlist_)
 
+#undef ARRAY_EQUALS
+#define ARRAY_EQUALS(a,b) (a->id == b->id)
+MAKE_ARRAY_CODE(wobject_t*, wobjptrlist_)
+
 unsigned idctr = 0;
 
 unsigned object_get_id

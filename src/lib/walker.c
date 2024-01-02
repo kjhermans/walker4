@@ -480,5 +480,13 @@ void walker_on_exit
   }
   walker_db_object_store(wglobal, &(wglobal->world.player.object));
   walker_db_object_store(wglobal, &(wglobal->world.player.flyer));
+  for (int i=0; i < 3; i++) {
+    for (int j=0; j < 3; j++) {
+      walker_db_quadrant_store(
+        wglobal,
+        &(wglobal->world.landscape.cache.mem.quadrant[ i ][ j ])
+      );
+    }
+  }
   fprintf(stderr, "Walker::OnExit. Saved all objects.\n");
 }

@@ -479,6 +479,11 @@ void walker_db_object_iterate
     void* arg
   );
 
+/* declared in ./src/lib//walker_explosion.c */
+extern
+void walker_explosion
+  (walker_t* w, int px, int pz, int py);
+
 /* declared in ./src/lib//walker_god.c */
 extern
 void walker_god

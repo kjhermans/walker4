@@ -123,6 +123,7 @@ void landscape_cache_update
 #endif
   for (int i=0; i < 3; i++) {
     for (int j=0; j < 3; j++) {
+      walker_db_quadrant_store(ls->walker, &(ls->cache.mem.quadrant[ i ][ j ]));
       if (qx+i >= ls->cache.mem.qp.x && qx+i < ls->cache.mem.qp.x+3
           && qz+j >= ls->cache.mem.qp.z && qz+j < ls->cache.mem.qp.z+3)
       {

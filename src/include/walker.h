@@ -140,6 +140,9 @@ struct wobject
       int                       adversarial;
       float                     rotxz;
       float                     rotyz;
+      float                     oxz;
+      float                     oyz;
+      float                     circle;
     }                         flyer;
   }                         subtype;
 };

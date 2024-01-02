@@ -203,14 +203,17 @@ void flyer_update
 {
   (void)w;
 
+  if (o->subtype.flyer.circle) {
+    o->oxz += o->subtype.flyer.circle;
+  }
   if (o->subtype.flyer.rotxz > 0) {
-    o->oxz += .2;
+    o->subtype.flyer.oxz += .2;
     o->subtype.flyer.rotxz -= .2;
   } else if ((rand() % 16) == 0) {
     o->subtype.flyer.rotxz = ((float)(rand() % 16)) / WPI;
   }
   if (o->subtype.flyer.rotyz > 0) {
-    o->oyz += .2;
+    o->subtype.flyer.oyz += .2;
     o->subtype.flyer.rotyz -= .2;
   } else if ((rand() % 16) == 0) {
     o->subtype.flyer.rotyz = ((float)(rand() % 16)) / WPI;
@@ -227,8 +230,8 @@ void flyer_draw
 
   PL_mst_push();
   PL_mst_translate(p.x, o->position.y, p.z);
-  PL_mst_rotatex((int)(o->oyz / PL_RAD256));
-  PL_mst_rotatey((int)(o->oxz / PL_RAD256));
+  PL_mst_rotatex((int)(o->subtype.flyer.oyz / PL_RAD256));
+  PL_mst_rotatey((int)(o->subtype.flyer.oxz / PL_RAD256));
   PL_render_object(&obj);
   PL_mst_pop();
 }

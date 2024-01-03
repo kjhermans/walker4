@@ -404,8 +404,8 @@ void landscape_tile_get_triangles
 
 }
 
-int landscape_tile_get_cache
-  (wlandscape_t* ls, int tx, int tz, wtile_t* tile)
+wtile_t* landscape_tile_get_cache_ptr
+  (wlandscape_t* ls, int tx, int tz)
 {
   int qx, qz;
   int qtx, qtz;
@@ -416,7 +416,19 @@ int landscape_tile_get_cache
   {
     int i = qx - ls->cache.mem.qp.x;
     int j = qz - ls->cache.mem.qp.z;
-    *tile = ls->cache.mem.quadrant[ i ][ j ].tiles[ qtx ][ qtz ];
+    return &(ls->cache.mem.quadrant[ i ][ j ].tiles[ qtx ][ qtz ]);
+  } else {
+    return NULL;
+  }
+}
+
+int landscape_tile_get_cache
+  (wlandscape_t* ls, int tx, int tz, wtile_t* tile)
+{
+  wtile_t* t = landscape_tile_get_cache_ptr(ls, tx, tz);
+
+  if (t) {
+    *tile = *t;
     return 0;
   } else {
     return ~0;

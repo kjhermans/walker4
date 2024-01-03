@@ -66,6 +66,9 @@ void walker_load_object
     object_init(o, o->type);
     ol->player_flyer_seen = 1;
     w->world.player.flyer = *o;
+    if (o->flags & WOBJFLAG_FLYING) {
+      w->world.player.flyer.flags &= ~(WOBJFLAG_VISIBLE);
+    }
     break;
   case WOBJTYPE_AFLYER:
     ++(ol->nflyers);

@@ -56,6 +56,11 @@ extern
 void landscape_init
   (wlandscape_t* ls, unsigned seed, walker_t* w);
 
+/* declared in ./src/lib//landscape_explosion.c */
+extern
+void landscape_explosion
+  (wlandscape_t* ls, int px, int pz, int py);
+
 /* declared in ./src/lib//landscape_get_elevation.c */
 extern
 void landscape_get_elevation
@@ -484,11 +489,6 @@ void walker_db_object_iterate
     void(*fnc)(walker_t*w,wobject_t*,void*),
     void* arg
   );
-
-/* declared in ./src/lib//walker_explosion.c */
-extern
-void walker_explosion
-  (walker_t* w, int px, int pz, int py);
 
 /* declared in ./src/lib//walker_god.c */
 extern

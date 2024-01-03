@@ -79,7 +79,7 @@ void walker_load_object
 }
 
 /**
- *
+ * Loads stored objects from the database from the database on init.
  */
 void walker_objects_load
   (walker_t* w)

@@ -75,6 +75,10 @@ void walker_load_object
     object_init(o, o->type);
     wobjectlist_push(&(w->world.objects), *o);
     break;
+  case WOBJTYPE_TNT:
+    object_init(o, o->type);
+    wobjectlist_push(&(w->world.objects), *o);
+    break;
   }
 }
 

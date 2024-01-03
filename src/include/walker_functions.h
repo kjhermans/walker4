@@ -159,77 +159,77 @@ extern
 void landscape_tile_debug
   (wtile_t* tile);
 
-/* declared in ./src/lib//object.c */
+/* declared in ./src/lib//object_backward.c */
+extern
+void object_backward
+  (wobject_t* o);
+
+/* declared in ./src/lib//object_debug.c */
+extern
+void object_debug
+  (wobject_t* o);
+
+/* declared in ./src/lib//object_draw.c */
+extern
+void object_draw
+  (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision);
+
+/* declared in ./src/lib//object_forward.c */
+extern
+void object_forward
+  (wobject_t* o);
+
+/* declared in ./src/lib//object_friction.c */
+extern
+void object_friction
+  (wobject_t* o);
+
+/* declared in ./src/lib//object_get_id.c */
 extern
 unsigned object_get_id
   ()
   __attribute__ ((warn_unused_result));
 
-/* declared in ./src/lib//object.c */
+/* declared in ./src/lib//object_get_vision.c */
 extern
-void object_init
-  (wobject_t* o, unsigned type);
+void object_get_vision
+  (wobject_t* o, vec2d_t* vision);
 
-/* declared in ./src/lib//object.c */
-extern
-void object_draw
-  (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision);
-
-/* declared in ./src/lib//object.c */
+/* declared in ./src/lib//object_gravity.c */
 extern
 void object_gravity
   (wobject_t* o);
 
-/* declared in ./src/lib//object.c */
+/* declared in ./src/lib//object_init.c */
 extern
-void object_friction
-  (wobject_t* o);
+void object_init
+  (wobject_t* o, unsigned type);
 
-/* declared in ./src/lib//object.c */
-extern
-void object_turnright
-  (wobject_t* o, float radians);
-
-/* declared in ./src/lib//object.c */
-extern
-void object_turnleft
-  (wobject_t* o, float radians);
-
-/* declared in ./src/lib//object.c */
-extern
-void object_turnup
-  (wobject_t* o, float radians);
-
-/* declared in ./src/lib//object.c */
-extern
-void object_turndown
-  (wobject_t* o, float radians);
-
-/* declared in ./src/lib//object.c */
-extern
-void object_forward
-  (wobject_t* o);
-
-/* declared in ./src/lib//object.c */
-extern
-void object_backward
-  (wobject_t* o);
-
-/* declared in ./src/lib//object.c */
+/* declared in ./src/lib//object_move.c */
 extern
 int object_move
   (wobject_t* o, wlandscape_t* ls)
   __attribute__ ((warn_unused_result));
 
-/* declared in ./src/lib//object.c */
+/* declared in ./src/lib//object_turndown.c */
 extern
-void object_get_vision
-  (wobject_t* o, vec2d_t* vision);
+void object_turndown
+  (wobject_t* o, float radians);
 
-/* declared in ./src/lib//object.c */
+/* declared in ./src/lib//object_turnleft.c */
 extern
-void object_debug
-  (wobject_t* o);
+void object_turnleft
+  (wobject_t* o, float radians);
+
+/* declared in ./src/lib//object_turnright.c */
+extern
+void object_turnright
+  (wobject_t* o, float radians);
+
+/* declared in ./src/lib//object_turnup.c */
+extern
+void object_turnup
+  (wobject_t* o, float radians);
 
 /* declared in ./src/lib//overlay.c */
 extern

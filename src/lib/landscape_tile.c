@@ -114,7 +114,7 @@ void landscape_tile_chasm
       tile->hardness = 2;
     }
   }
-NOCHASM:
+NOCHASM: ;
 }
 
 /**

@@ -398,6 +398,17 @@ extern
 void text_object_set_visibility
   (text_object_t* o, int visible);
 
+/* declared in ./src/lib//tnt.c */
+extern
+void initbox_tnt
+  ();
+
+/* declared in ./src/lib//tnt.c */
+extern
+struct PL_OBJ* getbox_tnt
+  ()
+  __attribute__ ((warn_unused_result));
+
 /* declared in ./src/lib//walker.c */
 extern
 void walker_configure

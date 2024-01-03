@@ -10,7 +10,10 @@ profile:
 funcheaders: src/include/walker_functions.h
 
 src/include/walker_functions.h: src/lib/*.c
-	./bin/genfnchdr -t wtile_t ./src/lib/ > src/include/walker_functions.h
+	./bin/genfnchdr \
+	  -t wtile_t \
+	  -t 'struct PL_OBJ' \
+	  ./src/lib/ > src/include/walker_functions.h
 
 cleanlib:
 	rm -f src/include/walker_functions.h

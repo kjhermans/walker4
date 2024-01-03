@@ -9,7 +9,7 @@ my @types = (
   'unsigned[ \t\r\n]+char', 'uchar', 'char', 'double',
   'float', 'u_int64_t', 'uint64_t', 'int64_t', 'u_int32_t',
   'uint32_t', 'int32_t', 'u_int16_t', 'uint16_t',
-  'int16_t', 'naio_resobj_t',
+  'int16_t', 'wtile_t', 'struct PL_OBJ',
 );
 
 my $pattern;

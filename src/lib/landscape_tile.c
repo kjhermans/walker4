@@ -148,44 +148,65 @@ void landscape_tile_optimize
 
   for (unsigned i=0; i < 9; i++) {
     if (tiles[ i ] == NULL) {
-      landscape_tile_get(ls, tx+((i%3)-1), tz+((i/3)-1), &(cache[ i ]));
-      tiles[ i ] = &(cache[ i ]);
+      wtile_t* t = landscape_tile_get_cache_ptr(ls, tx+((i%3)-1), tz+((i/3)-1));
+      if (t) {
+        tiles[ i ] = t;
+      } else {
+        landscape_tile_get(ls, tx+((i%3)-1), tz+((i/3)-1), &(cache[ i ]));
+        tiles[ i ] = &(cache[ i ]);
+      }
     }
   }
+  tiles[ 0 ]->elevation[ 8 ] =
+  tiles[ 1 ]->elevation[ 6 ] =
+  tiles[ 3 ]->elevation[ 2 ] =
   tiles[ 4 ]->elevation[ 0 ] = (
     tiles[ 0 ]->elevation[ 4 ] +
     tiles[ 1 ]->elevation[ 4 ] +
     tiles[ 3 ]->elevation[ 4 ] +
     tiles[ 4 ]->elevation[ 4 ]
   ) / 4;
+  tiles[ 1 ]->elevation[ 7 ] =
   tiles[ 4 ]->elevation[ 1 ] = (
     tiles[ 4 ]->elevation[ 4 ] +
     tiles[ 1 ]->elevation[ 4 ]
   ) / 2;
+  tiles[ 2 ]->elevation[ 6 ] =
+  tiles[ 1 ]->elevation[ 8 ] =
+  tiles[ 5 ]->elevation[ 0 ] =
   tiles[ 4 ]->elevation[ 2 ] = (
     tiles[ 1 ]->elevation[ 4 ] +
     tiles[ 2 ]->elevation[ 4 ] +
     tiles[ 4 ]->elevation[ 4 ] +
     tiles[ 5 ]->elevation[ 4 ]
   ) / 4;
+  tiles[ 3 ]->elevation[ 5 ] =
   tiles[ 4 ]->elevation[ 3 ] = (
     tiles[ 4 ]->elevation[ 4 ] +
     tiles[ 3 ]->elevation[ 4 ]
   ) / 2;
+  tiles[ 5 ]->elevation[ 3 ] =
   tiles[ 4 ]->elevation[ 5 ] = (
     tiles[ 4 ]->elevation[ 4 ] +
     tiles[ 5 ]->elevation[ 4 ]
   ) / 2;
+  tiles[ 6 ]->elevation[ 2 ] =
+  tiles[ 3 ]->elevation[ 8 ] =
+  tiles[ 7 ]->elevation[ 0 ] =
   tiles[ 4 ]->elevation[ 6 ] = (
     tiles[ 3 ]->elevation[ 4 ] +
     tiles[ 4 ]->elevation[ 4 ] +
     tiles[ 6 ]->elevation[ 4 ] +
     tiles[ 7 ]->elevation[ 4 ]
   ) / 4;
+  tiles[ 7 ]->elevation[ 1 ] =
   tiles[ 4 ]->elevation[ 7 ] = (
     tiles[ 4 ]->elevation[ 4 ] +
     tiles[ 7 ]->elevation[ 4 ]
   ) / 2;
+  tiles[ 8 ]->elevation[ 0 ] =
+  tiles[ 7 ]->elevation[ 2 ] =
+  tiles[ 5 ]->elevation[ 6 ] =
   tiles[ 4 ]->elevation[ 8 ] = (
     tiles[ 4 ]->elevation[ 4 ] +
     tiles[ 5 ]->elevation[ 4 ] +

@@ -125,6 +125,12 @@ void landscape_tile_get_triangles
 
 /* declared in ./src/lib//landscape_tile.c */
 extern
+wtile_t* landscape_tile_get_cache_ptr
+  (wlandscape_t* ls, int tx, int tz)
+  __attribute__ ((warn_unused_result));
+
+/* declared in ./src/lib//landscape_tile.c */
+extern
 int landscape_tile_get_cache
   (wlandscape_t* ls, int tx, int tz, wtile_t* tile)
   __attribute__ ((warn_unused_result));

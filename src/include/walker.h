@@ -114,6 +114,7 @@ struct wobject
 #define WOBJTYPE_PLAYER     0
 #define WOBJTYPE_PFLYER     1 // player flyer
 #define WOBJTYPE_AFLYER     2 // adversarial flyer
+#define WOBJTYPE_TNT        3
   unsigned                  type;
 
 #define WOBJFLAG_INITIALIZED (1<<0)
@@ -144,6 +145,10 @@ struct wobject
       float                     oyz;
       float                     circle;
     }                         flyer;
+    struct {
+      int                       set;
+      unsigned                  countdown;
+    }                         tnt;
   }                         subtype;
 };
 

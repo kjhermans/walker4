@@ -400,14 +400,18 @@ void text_object_set_visibility
 
 /* declared in ./src/lib//tnt.c */
 extern
-void initbox_tnt
-  ();
+void tnt_update
+  (wobject_t* o, walker_t* w);
 
 /* declared in ./src/lib//tnt.c */
 extern
-struct PL_OBJ* getbox_tnt
-  ()
-  __attribute__ ((warn_unused_result));
+void tnt_draw
+  (wobject_t* o, walker_t* w, pt2d_t p);
+
+/* declared in ./src/lib//tnt.c */
+extern
+void tnt_init
+  ();
 
 /* declared in ./src/lib//walker.c */
 extern
@@ -510,6 +514,11 @@ void walker_god
 extern
 void walker_objects_load
   (walker_t* w);
+
+/* declared in ./src/lib//world_init.c */
+extern
+void world_init
+  (wworld_t* world, unsigned seed, walker_t* w);
 
 
 

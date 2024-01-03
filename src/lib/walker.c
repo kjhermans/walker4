@@ -441,7 +441,7 @@ void walker_init
   }
   walker_db_init(w, seed, reset);
 
-  landscape_init(&(w->world.landscape), seed, w);
+  world_init(&(w->world), seed, w);
   w->display.width = WDISPLAY_DEFAULT_WIDTH;
   w->display.height = WDISPLAY_DEFAULT_HEIGHT;
   //w->world.player.object.supported = 1;

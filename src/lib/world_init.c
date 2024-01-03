@@ -33,26 +33,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
-void object_init
-  (wobject_t* o, unsigned type)
+/**
+ *
+ */
+void world_init
+  (wworld_t* world, unsigned seed, walker_t* w)
 {
-  switch (type) {
-  case WOBJTYPE_PFLYER:
-  case WOBJTYPE_AFLYER:
-    flyer_init(o, type);
-    break;
-  case WOBJTYPE_TNT:
-    o->draw = tnt_draw;
-    o->update = tnt_update;
-    break;
-  default:
-    fprintf(stderr, "Unknown object type %u.\n", type);
-    o->draw = NULL;
-    o->update = NULL;
-  }
-  o->type = type;
-  if (!(o->id)) {
-    o->id = object_get_id();
-  }
-  o->flags |= WOBJFLAG_INITIALIZED;
+  landscape_init(&(world->landscape), seed, w);
+  tnt_init();
 }

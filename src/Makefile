@@ -1,9 +1,12 @@
-all: examine_dependencies
+all: examine_dependencies pictures
 	cd PL3D-KC && make -f makefile.linux
 	cd sdbm_tree && make
 	cd naigama && make
 	cd lib && make
 	cd main && make
+
+pictures:
+	cd pics && make
 
 examine_dependencies:
 	../bin/assertlib \

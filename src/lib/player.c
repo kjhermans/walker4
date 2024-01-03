@@ -69,7 +69,12 @@ void player_handle_keys
     object_backward(&(p->object));
 #ifdef _DEBUG
   } else if (pkb_key_pressed('e')) {
-    walker_explosion(w, p->object.position.x, p->object.position.z, -1);
+    landscape_explosion(
+      &(w->world.landscape),
+      p->object.position.x,
+      p->object.position.z,
+      -1 // replace with a 3defined GROUNDLEVEL
+    );
   } else if (pkb_key_pressed('b')) {
     p->object.speed_hor = 0;
   } else if (pkb_key_pressed('l')) {

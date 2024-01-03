@@ -36,17 +36,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  *
  */
-void walker_explosion
-  (walker_t* w, int px, int pz, int py)
+void landscape_explosion
+  (wlandscape_t* ls, int px, int pz, int py)
 {
   int tx, tz;
-  wtile_t t;
+  wtile_t* t;
 
   landscape_pos2tile(px, pz, &tx, &tz);
-  if (landscape_tile_get_cache(&(w->world.landscape), tx, tz, &t) == 0) {
+  if ((t = landscape_tile_get_cache_ptr(ls, tx, tz)) != 0) {
     if (py == -1) {
-      py = t.elevation[ 4 ];
+      py = t->elevation[ 4 ];
     }
-//..
+    if (t->elevation[ 4 ] > 2*WTILESIZE) {
+      t->elevation[ 4 ] -= (2*WTILESIZE);
+      wtile_t* tiles[ 9 ] = {
+        0, 0, 0, 0, t, 0, 0, 0, 0
+      };
+      landscape_tile_optimize(ls, tx, tz, tiles);
+    }
   }
 }

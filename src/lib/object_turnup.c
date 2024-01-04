@@ -39,6 +39,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_turnup
   (wobject_t* o, float radians)
 {
+  ASSERT(o)
+
   if ((o->oyz -= radians) < 0) {
     o->oyz += (2 * WPI);
   }

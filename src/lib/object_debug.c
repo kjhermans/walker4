@@ -36,6 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_debug
   (wobject_t* o)
 {
+  ASSERT(o)
+
   fprintf(stderr,
     "Object: id:%u, typ:%d, pos:%d,%d,%d, or:%f,%f, spd:%d,%d fl:%d, sup:%d\n",
     o->id, o->type,

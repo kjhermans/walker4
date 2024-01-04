@@ -39,6 +39,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_engage
   (wobject_t* o, walker_t* w)
 {
+  ASSERT(o)
+  ASSERT(w)
+
   if (o->engage) {
     o->engage(o, w);
   }

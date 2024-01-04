@@ -40,6 +40,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_gravity
   (wobject_t* o)
 {
+  ASSERT(o)
+
   if (o->flags & WOBJFLAG_FLYING || o->cache.ground.supported) {
     return;
   }

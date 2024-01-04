@@ -39,6 +39,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_get_vision
   (wobject_t* o, vec2d_t* vision)
 {
+  ASSERT(o)
+  ASSERT(vision)
+
   int tx, tz;
 
   landscape_pos2tile(o->position.x, o->position.z, &tx, &tz);

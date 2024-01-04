@@ -39,6 +39,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int object_move
   (wobject_t* o, wlandscape_t* ls)
 {
+  ASSERT(o)
+  ASSERT(ls)
+
   pt3d_t pt = o->position;
 
   int camry = (int)(o->oxz / PL_RAD256);

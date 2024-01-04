@@ -39,6 +39,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_forward
   (wobject_t* o)
 {
+  ASSERT(o)
+
   if ((o->speed_hor += 2) > MAXSPEED) {
     o->speed_hor = MAXSPEED;
   }

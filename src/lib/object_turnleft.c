@@ -39,6 +39,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_turnleft
   (wobject_t* o, float radians)
 {
+  ASSERT(o)
+
   if ((o->oxz -= radians) < 0) {
     o->oxz += (2 * WPI);
   }

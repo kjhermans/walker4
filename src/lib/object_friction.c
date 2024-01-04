@@ -36,6 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_friction
   (wobject_t* o)
 {
+  ASSERT(o)
+
   if (o->cache.ground.supported) {
     if (o->speed_hor > 0) {
       --(o->speed_hor);

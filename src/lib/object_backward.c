@@ -39,6 +39,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_backward
   (wobject_t* o)
 {
+  ASSERT(o)
+
   if ((o->speed_hor -= 2) < MINSPEED) {
     o->speed_hor = MINSPEED;
   }

@@ -36,6 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void object_init
   (wobject_t* o, unsigned type)
 {
+  ASSERT(o)
+
   switch (type) {
   case WOBJTYPE_PFLYER:
   case WOBJTYPE_AFLYER:

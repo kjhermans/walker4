@@ -50,7 +50,7 @@ void tnt_init
 void tnt_update
   (wobject_t* o, walker_t* w)
 {
-  object_move(o, &(w->world.landscape));
+  int r = object_move(o, &(w->world.landscape)); (void)r;
 }
 
 void tnt_draw

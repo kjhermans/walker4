@@ -86,6 +86,10 @@ void player_handle_keys
        p->object.flags |= (WOBJFLAG_FLYING);
     }
 #endif
+  } else if (pkb_key_pressed('x')) {
+    if (p->objectinview) {
+      object_engage(p->objectinview, w);
+    }
   } else if (pkb_key_pressed('d')) {
     w->display.show_stats = !(w->display.show_stats);
     text_object_set_visibility(w->display.overlay.stats, w->display.show_stats);

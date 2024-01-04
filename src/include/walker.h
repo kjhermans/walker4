@@ -129,6 +129,7 @@ struct wobject
 
   void(*                    update)(wobject_t*, walker_t*);
   void(*                    draw)(wobject_t*, walker_t*, pt2d_t);
+  void(*                    engage)(wobject_t*,walker_t*);
 
   struct {
     pt2d_t                    tile;

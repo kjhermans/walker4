@@ -51,6 +51,7 @@ void walker_load_object
   object_debug(o);
   o->draw = NULL;
   o->update = NULL;
+  o->engage = NULL;
   if (o->id > ol->maxid) {
     ol->maxid = o->id;
   }

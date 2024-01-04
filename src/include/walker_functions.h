@@ -174,6 +174,11 @@ extern
 void object_draw
   (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision);
 
+/* declared in ./src/lib//object_engage.c */
+extern
+void object_engage
+  (wobject_t* o, walker_t* w);
+
 /* declared in ./src/lib//object_forward.c */
 extern
 void object_forward

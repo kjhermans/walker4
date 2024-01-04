@@ -457,12 +457,16 @@ void walker_init
   text_object_set_visibility(w->display.overlay.help, 0);
   overlay_set_callback(walker_inventory, w);
   w->world.player.inventory[ 0 ].item = 'c';
-  w->world.player.inventory[ 0 ].amount = 10;
+  w->world.player.inventory[ 0 ].amount = 32;
   walker_objects_load(w);
-  //player_init(&(w->world.player));
-  //flyer_init(&(w->world.player.flyer));
   t = t0 = tlast = time(0);
 }
+
+static
+char* options = 0;
+
+static
+void(*optfnc)(walker_t*,char) = 0;
 
 void walker_warn
   (walker_t* w, char* str)
@@ -470,6 +474,17 @@ void walker_warn
   text_object_set_text(w->display.overlay.warn, str);
   text_object_set_visibility(w->display.overlay.warn, 1);
   w->display.overlay.warn_timeout = 64;
+}
+
+void walker_dialog
+  (walker_t* w, char* str, char* opt, void(*fnc)(walker_t*,char))
+{
+  char text[ 128 ];
+
+  snprintf(text, sizeof(text), "%s [%s]", str, opt);
+  walker_warn(w, text);
+  options = opt;
+  optfnc = fnc;
 }
 
 void walker_on_exit

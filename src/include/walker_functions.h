@@ -210,6 +210,11 @@ extern
 void object_init
   (wobject_t* o, unsigned type);
 
+/* declared in ./src/lib//object_lists.c */
+extern
+void wobjectlist_remove_by_id
+  (wobjectlist_t* list, wobject_t* o);
+
 /* declared in ./src/lib//object_move.c */
 extern
 int object_move

@@ -40,3 +40,13 @@ MAKE_ARRAY_CODE(wobject_t, wobjectlist_)
 #undef ARRAY_EQUALS
 #define ARRAY_EQUALS(a,b) (a->id == b->id)
 MAKE_ARRAY_CODE(wobject_t*, wobjptrlist_)
+
+void wobjectlist_remove_by_id
+  (wobjectlist_t* list, wobject_t* o)
+{
+  for (unsigned i=0; i < list->count; i++) {
+    if (o->id == list->list[ i ].id) {
+      wobjectlist_rem(list, i--, 0);
+    }
+  }
+}

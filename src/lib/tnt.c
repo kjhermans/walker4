@@ -58,9 +58,10 @@ void tnt_draw
 {
   (void)w;
 
-PL_raster_mode = PL_TEXTURED;
+  PL_raster_mode = PL_TEXTURED;
   PL_mst_push();
   PL_mst_translate(p.x, o->position.y, p.z);
   PL_render_object(tntcube);
   PL_mst_pop();
+  PL_raster_mode = PL_FLAT;
 }

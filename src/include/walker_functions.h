@@ -108,56 +108,56 @@ uint32_t landscape_random_get_topo_exp
   (int tx, int tz, int topic, uint32_t max)
   __attribute__ ((warn_unused_result));
 
-/* declared in ./src/lib//landscape_tile.c */
+/* declared in ./src/lib//landscape_tile_2quadrant.c */
 extern
-void landscape_tile_get_new
-  (int tx, int tz, wtile_t* tile);
-
-/* declared in ./src/lib//landscape_tile.c */
-extern
-void landscape_tile_optimize
-  (wlandscape_t* ls, int tx, int tz, wtile_t* tiles[ 9 ]);
-
-/* declared in ./src/lib//landscape_tile.c */
-extern
-void landscape_tile_get_triangles_optimized
-  (wtile_t* tile, int tr[ 8 ][ 3 ][ 3 ]);
-
-/* declared in ./src/lib//landscape_tile.c */
-extern
-void landscape_tile_get_triangles
-  (wlandscape_t* ls, int tx, int tz, int tr[ 8 ][ 3 ][ 3 ]);
-
-/* declared in ./src/lib//landscape_tile.c */
-extern
-wtile_t* landscape_tile_get_cache_ptr
-  (wlandscape_t* ls, int tx, int tz)
-  __attribute__ ((warn_unused_result));
-
-/* declared in ./src/lib//landscape_tile.c */
-extern
-int landscape_tile_get_cache
-  (wlandscape_t* ls, int tx, int tz, wtile_t* tile)
-  __attribute__ ((warn_unused_result));
-
-/* declared in ./src/lib//landscape_tile.c */
-extern
-void landscape_tile_get
-  (wlandscape_t* ls, int tx, int tz, wtile_t* tile);
-
-/* declared in ./src/lib//landscape_tile.c */
-extern
-void landscape_tile2quadrant
+void landscape_tile_2quadrant
   (
     int tx, int tz,
     int* qx, int* qz,
     int* qtx, int* qtz
   );
 
-/* declared in ./src/lib//landscape_tile.c */
+/* declared in ./src/lib//landscape_tile_debug.c */
 extern
 void landscape_tile_debug
   (wtile_t* tile);
+
+/* declared in ./src/lib//landscape_tile_get.c */
+extern
+void landscape_tile_get
+  (wlandscape_t* ls, int tx, int tz, wtile_t* tile);
+
+/* declared in ./src/lib//landscape_tile_get_cache.c */
+extern
+int landscape_tile_get_cache
+  (wlandscape_t* ls, int tx, int tz, wtile_t* tile)
+  __attribute__ ((warn_unused_result));
+
+/* declared in ./src/lib//landscape_tile_get_cache_ptr.c */
+extern
+wtile_t* landscape_tile_get_cache_ptr
+  (wlandscape_t* ls, int tx, int tz)
+  __attribute__ ((warn_unused_result));
+
+/* declared in ./src/lib//landscape_tile_get_new.c */
+extern
+void landscape_tile_get_new
+  (int tx, int tz, wtile_t* tile);
+
+/* declared in ./src/lib//landscape_tile_get_triangles.c */
+extern
+void landscape_tile_get_triangles
+  (wlandscape_t* ls, int tx, int tz, int tr[ 8 ][ 3 ][ 3 ]);
+
+/* declared in ./src/lib//landscape_tile_get_triangles_optimized.c */
+extern
+void landscape_tile_get_triangles_optimized
+  (wtile_t* tile, int tr[ 8 ][ 3 ][ 3 ]);
+
+/* declared in ./src/lib//landscape_tile_optimize.c */
+extern
+void landscape_tile_optimize
+  (wlandscape_t* ls, int tx, int tz, wtile_t* tiles[ 9 ]);
 
 /* declared in ./src/lib//object_backward.c */
 extern
@@ -478,6 +478,11 @@ void walker_init
 extern
 void walker_warn
   (walker_t* w, char* str);
+
+/* declared in ./src/lib//walker.c */
+extern
+void walker_dialog
+  (walker_t* w, char* str, char* opt, void(*fnc)(walker_t*,char));
 
 /* declared in ./src/lib//walker.c */
 extern

@@ -118,7 +118,7 @@ void walker_update
     wglobal->world.player.object.position.z,
     &tx, &tz
   );
-  landscape_tile2quadrant(tx, tz, &qx, &qz, 0, 0);
+  landscape_tile_2quadrant(tx, tz, &qx, &qz, 0, 0);
 
   player_handle_keys(&(w->world.player), wglobal, 0);
   player_update(&(w->world.player), &(w->world.landscape));

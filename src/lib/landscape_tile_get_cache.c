@@ -34,66 +34,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "walker.h"
 
 /**
- * Returns non zero if there's been a move.
+ *
  */
-int object_move
-  (wobject_t* o, wlandscape_t* ls)
+int landscape_tile_get_cache
+  (wlandscape_t* ls, int tx, int tz, wtile_t* tile)
 {
-  pt3d_t pt = o->position;
+  wtile_t* t = landscape_tile_get_cache_ptr(ls, tx, tz);
 
-  int camry = (int)(o->oxz / PL_RAD256);
-  int camrx = (int)(o->oyz / PL_RAD256);
-  o->position.x += (o->speed_hor * PL_sin[camry & PL_TRIGMSK]) >> PL_P;
-  o->position.z += (o->speed_hor * PL_cos[camry & PL_TRIGMSK]) >> PL_P;
-  if (o->flags & WOBJFLAG_FLYING) {
-    o->position.y += -((o->speed_hor * PL_sin[camrx & PL_TRIGMSK]) >> PL_P);
-  } else {
-    o->position.y += o->speed_vert;
-  }
-
-  /* checking whether on solid ground */
-//  if (o->speed_hor) {
-    o->cache.ground.supported = 0;
-    landscape_get_elevation(ls, o, &(o->cache.ground));
-    if (o->position.y <= o->cache.ground.elevation + 64) {
-      o->position.y = o->cache.ground.elevation + 64;
-      o->cache.ground.supported = 1;
-    }
-//  }
-
-  if (WPOS_XMIN && o->position.x < WPOS_XMIN) {
-    o->position.x = WPOS_XMIN;
-  }
-  if (WPOS_XMAX && o->position.x > WPOS_XMAX) {
-    o->position.x = WPOS_XMAX;
-  }
-  if (WPOS_ZMIN && o->position.z < WPOS_ZMIN) {
-    o->position.z = WPOS_ZMIN;
-  }
-  if (WPOS_ZMAX && o->position.z > WPOS_ZMAX) {
-    o->position.z = WPOS_ZMAX;
-  }
-
-  /* boxing */
-  if (o->position.y < FLOOR) {
-    o->position.y = FLOOR;
-  } else if (o->position.y > CEILING) {
-    o->position.y = CEILING;
-  }
-
-  landscape_pos2tile(
-    o->position.x, o->position.z,
-    &(o->cache.tile.x), &(o->cache.tile.z)
-  );
-  landscape_tile_2quadrant(
-    o->cache.tile.x, o->cache.tile.z,
-    &(o->cache.quadrant.x), &(o->cache.quadrant.z),
-    0, 0
-  );
-
-  if (o->position.x != pt.x || o->position.y != pt.y || o->position.z != pt.z) {
-    return ~0;
-  } else {
+  if (t) {
+    *tile = *t;
     return 0;
+  } else {
+    return ~0;
   }
 }

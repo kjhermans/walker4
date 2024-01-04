@@ -51,11 +51,6 @@ extern
 void json_free
   (json_t* json);
 
-/* declared in ./src/lib//landscape.c */
-extern
-void landscape_init
-  (wlandscape_t* ls, unsigned seed, walker_t* w);
-
 /* declared in ./src/lib//landscape_explosion.c */
 extern
 void landscape_explosion
@@ -65,6 +60,11 @@ void landscape_explosion
 extern
 void landscape_get_elevation
   (wlandscape_t* ls, wobject_t* o, wground_t* ground);
+
+/* declared in ./src/lib//landscape_init.c */
+extern
+void landscape_init
+  (wlandscape_t* ls, unsigned seed, walker_t* w);
 
 /* declared in ./src/lib//landscape_pos2tile.c */
 extern

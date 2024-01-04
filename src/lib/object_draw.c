@@ -31,16 +31,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * \brief
  */
 
+#include <math.h>
+
 #include "walker.h"
 
+/**
+ * Draws the object, if it is visible, and within vision.
+ * Also, calculates if the object is close enough to be in the vision's center.
+ */
 void object_draw
   (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision)
 {
-if (o->draw == NULL) { object_debug(o); }
   ASSERT(o)
   ASSERT(o->draw)
   ASSERT(w)
   ASSERT(p)
+
+  int dx = o->position.x - p->object.position.x;
+  int dz = o->position.z - p->object.position.z;
+  int dy = o->position.y - p->object.position.y;
 
   if (o->flags & WOBJFLAG_VISIBLE
       && o->cache.tile.x >= vision.o.x
@@ -48,13 +57,16 @@ if (o->draw == NULL) { object_debug(o); }
       && o->cache.tile.z >= vision.o.z
       && o->cache.tile.z <= vision.d.z)
   {
-    o->draw(
-      o,
-      w,
-      (pt2d_t){
-        .x = o->position.x - p->object.position.x,
-        .z = o->position.z - p->object.position.z
-      }
-    );
+    o->draw(o, w, (pt2d_t){ .x = dx, .z = dz });
+
+    float oxz = atan2(dx, dz); if (oxz < 0) { oxz += (2 * WPI); }
+    float oyz = atan2(dz, dy); if (oyz < 0) { oyz += (2 * WPI); }
+    if (oxz >= p->object.oxz - 0.1
+        && oxz <= p->object.oxz + 0.1
+        && oyz >= p->object.oyz - 0.1
+        && oyz <= p->object.oyz + 0.1)
+    {
+      p->objectinview = o;
+    }
   }
 }

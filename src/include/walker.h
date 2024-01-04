@@ -162,6 +162,7 @@ typedef struct
 {
   wobject_t                 object;
   wobject_t                 flyer;
+  wobject_t*                objectinview;
   struct {
     unsigned                  item;
     unsigned                  amount;

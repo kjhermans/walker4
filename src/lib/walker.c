@@ -346,6 +346,7 @@ void display
     }
   }
 
+  wglobal->world.player.objectinview = 0;
   for (unsigned i=0; i < wglobal->world.objects.count; i++) {
     wobject_t* o = wobjectlist_getptr(&(wglobal->world.objects), i);
     object_draw(o, wglobal, &(wglobal->world.player), vision);

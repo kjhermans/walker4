@@ -148,7 +148,7 @@ struct wobject
     }                         flyer;
     struct {
       int                       set;
-      unsigned                  countdown;
+      int                       timer;
     }                         tnt;
   }                         subtype;
 };

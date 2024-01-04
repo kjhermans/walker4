@@ -420,6 +420,11 @@ void tnt_update
 
 /* declared in ./src/lib//tnt.c */
 extern
+void tnt_engage
+  (wobject_t* o, walker_t* w);
+
+/* declared in ./src/lib//tnt.c */
+extern
 void tnt_draw
   (wobject_t* o, walker_t* w, pt2d_t p);
 

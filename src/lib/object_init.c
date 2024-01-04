@@ -44,6 +44,7 @@ void object_init
   case WOBJTYPE_TNT:
     o->draw = tnt_draw;
     o->update = tnt_update;
+    o->engage = tnt_engage;
     break;
   default:
     fprintf(stderr, "Unknown object type %u.\n", type);

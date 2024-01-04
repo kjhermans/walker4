@@ -31,6 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * \brief
  */
 
+#include <time.h>
+
 #include "walker.h"
 #include "tnt.h"
 
@@ -51,6 +53,20 @@ void tnt_update
   (wobject_t* o, walker_t* w)
 {
   int r = object_move(o, &(w->world.landscape)); (void)r;
+  if (o->subtype.tnt.set && o->subtype.tnt.timer < time(0)) {
+    landscape_explosion(
+      &(w->world.landscape), o->position.x, o->position.z, -1
+    );
+    wobjectlist_remove_by_id(&(w->world.objects), o);
+  }
+}
+
+void tnt_engage
+  (wobject_t* o, walker_t* w)
+{
+  o->subtype.tnt.set = 1;
+  o->subtype.tnt.timer = time(0) + 8;
+  walker_warn(w, "TNT set to explode in 8 seconds.");
 }
 
 void tnt_draw

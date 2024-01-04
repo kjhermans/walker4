@@ -400,6 +400,11 @@ void text_object_set_visibility
 
 /* declared in ./src/lib//tnt.c */
 extern
+void tnt_init
+  ();
+
+/* declared in ./src/lib//tnt.c */
+extern
 void tnt_update
   (wobject_t* o, walker_t* w);
 
@@ -407,11 +412,6 @@ void tnt_update
 extern
 void tnt_draw
   (wobject_t* o, walker_t* w, pt2d_t p);
-
-/* declared in ./src/lib//tnt.c */
-extern
-void tnt_init
-  ();
 
 /* declared in ./src/lib//walker.c */
 extern

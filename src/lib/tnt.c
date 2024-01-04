@@ -34,27 +34,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "walker.h"
 #include "tnt.h"
 
-static struct PL_TEX tnttex;
-static unsigned char tntimg[ PL_REQ_TEX_DIM ][ PL_REQ_TEX_DIM ][ 4 ] = IMG;
+static struct PL_TEX tnttex = { 0 };
+static int tntimg[ PL_REQ_TEX_DIM * PL_REQ_TEX_DIM ] = IMG;
 static struct PL_OBJ* tntcube;
-
-void tnt_update
-  (wobject_t* o, walker_t* w)
-{
-  (void)w;
-  (void)o;
-}
-
-void tnt_draw
-  (wobject_t* o, walker_t* w, pt2d_t p)
-{
-  (void)w;
-  
-  PL_mst_push();
-  PL_mst_translate(p.x, o->position.y, p.z);
-  PL_render_object(tntcube);
-  PL_mst_pop();
-}
 
 void tnt_init
   ()
@@ -63,4 +45,22 @@ void tnt_init
   tnttex.data = (int*)tntimg;
   tntcube = PL_gen_box(128, 128, 128, PL_ALL, 255, 255, 255);
   PL_texture(NULL);
+}
+
+void tnt_update
+  (wobject_t* o, walker_t* w)
+{
+  object_move(o, &(w->world.landscape));
+}
+
+void tnt_draw
+  (wobject_t* o, walker_t* w, pt2d_t p)
+{
+  (void)w;
+
+PL_raster_mode = PL_TEXTURED;
+  PL_mst_push();
+  PL_mst_translate(p.x, o->position.y, p.z);
+  PL_render_object(tntcube);
+  PL_mst_pop();
 }

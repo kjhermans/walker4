@@ -33,20 +33,19 @@ print "#define IMGWIDTH $dimension\n";
 print "#define IMGHEIGHT $dimension\n";
 print "#define IMG { \\\n";
 for (my $i=0; $i < $dimension; $i++) {
-  print "  { /* Row $i */ \\\n";
+  print "  /* Row $i */ \\\n";
   for (my $j=0; $j < $dimension; $j++) {
     my $index = $img->getPixel($xoff + $j, $yoff + $i);
     my ($r,$g,$b) = $img->rgb($index);
     if ($rshift) { $r = int($r * $rshift); if ($r >= 256) { $r = 255; } }
     if ($gshift) { $g = int($g * $gshift); if ($g >= 256) { $g = 255; } }
     if ($bshift) { $b = int($b * $bshift); if ($b >= 256) { $b = 255; } }
-    print "    { $r, $g, $b, 0xff }";
+    print "  ($r<<16)|($g<<8)|$b";
     if ($j < $dimension-1) {
       print ",";
     }
     print " \\\n";
   }
-  print "  }";
   if ($i < $dimension-1) {
     printf ",";
   }

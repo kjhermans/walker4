@@ -106,41 +106,48 @@ void walker_configure
   }
 }
 
+void walker_update_slow
+  (walker_t* w)
+{
+  god_update_slow(w);
+}
+
 void walker_update
   (walker_t* w)
 {
   int tx, tz;
   int qx, qz;
 
-  t = time(0);
   landscape_pos2tile(
-    wglobal->world.player.object.position.x,
-    wglobal->world.player.object.position.z,
+    w->world.player.object.position.x,
+    w->world.player.object.position.z,
     &tx, &tz
   );
   landscape_tile_2quadrant(tx, tz, &qx, &qz, 0, 0);
 
-  player_handle_keys(&(w->world.player), wglobal, 0);
+  player_handle_keys(&(w->world.player), w, 0);
   player_update(&(w->world.player), &(w->world.landscape));
-  flyer_update(&(wglobal->world.player.flyer), wglobal);
-  walker_god(wglobal);
+  flyer_update(&(w->world.player.flyer), w);
+  god_update(w);
 
   for (unsigned i=0; i < w->world.objects.count; i++) {
     wobject_t* o = wobjectlist_getptr(&(w->world.objects), i);
-    o->update(o, w);
+    if (o->update) {
+      o->update(o, w);
+    }
   }
 
   snprintf(statsbuffer, sizeof(statsbuffer)
     , "px:%d, pz:%d, py:%d, tx:%d, tz:%d, qx:%d, qz:%d, "
       "oxz:%d, oyz:%d, spd:%d, fll: %d"
-    , wglobal->world.player.object.position.x
-    , wglobal->world.player.object.position.z
-    , wglobal->world.player.object.position.y
+    , w->world.player.object.position.x
+    , w->world.player.object.position.z
+    , w->world.player.object.position.y
     , tx, tz, qx, qz
-    , (int)(wglobal->world.player.object.oxz / WDEGRAD)
-    , (int)(wglobal->world.player.object.oyz / WDEGRAD)
-    , wglobal->world.player.object.speed_hor
-    , wglobal->world.player.object.speed_vert
+    , (int)(w->world.player.object.oxz / WDEGRAD)
+    , (int)(w->world.player.object.oyz / WDEGRAD)
+    , w->world.player.object.speed_hor
+    , w->world.player.object.speed_vert
   );
   text_object_set_text(w->display.overlay.stats, statsbuffer);
   if (w->display.overlay.warn_timeout) {
@@ -187,6 +194,11 @@ static
 void update
   ()
 {
+  t = time(0);
+  if (t > tlast) {
+    tlast = t;
+    walker_update_slow(wglobal);
+  }
   walker_update(wglobal);
 }
 

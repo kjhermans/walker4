@@ -35,74 +35,61 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
-static
-void walker_god_reindex
-  (walker_t* w)
-{
-  w->world.god.flyers.count = 0;
-  for (unsigned i=0; i < w->world.objects.count; i++) {
-    wobject_t* o = wobjectlist_getptr(&(w->world.objects), i);
-    if (o->type == WOBJTYPE_AFLYER) {
-      wobjptrlist_push(&(w->world.god.flyers), o);
-    }
-  }
-}
-
 /**
  * Brings and directs all of the evil into the world.
  */
-void walker_god
+void god_update_slow
   (walker_t* w)
 {
-  if (w->world.god.flyers.count < GOD_MIN_FLYERS) {
-    walker_god_reindex(w);
-    if (w->world.god.flyers.count < GOD_MIN_FLYERS) {
-      int d = GOD_MIN_FLYERS - w->world.god.flyers.count;
-      for (int i=0; i < d; i++) {
-#ifdef _DEBUG
-        fprintf(stderr, "Creating adversarial flyer.\n");
-#endif
-        wobject_t o = { 0 };
-        object_init(&o, WOBJTYPE_AFLYER);
-        o.flags |= WOBJFLAG_FLYING;
-        o.position.y = 3000;
-        o.oxz = ((float)rand() / RAND_MAX) * WPI * 2;
-        o.speed_hor = 30;
-        o.subtype.flyer.circle = 1 / ((float)(rand() % 1000) + 1);
-        wobjectlist_push(&(w->world.objects), o);
-      }
-      walker_god_reindex(w);
-    }
-  }
-  if (w->world.player.object.position.y > 3000) {
-    for (unsigned i=0; i < w->world.god.flyers.count; i++) {
-      wobject_t* f;
-      wobjptrlist_get(&(w->world.god.flyers), i, &f);
+  unsigned nflyers = 0;
+
+  for (unsigned i=0; i < w->world.objects.count; i++) {
+    wobject_t* f = wobjectlist_getptr(&(w->world.objects), i);
+    if (f->type == WOBJTYPE_AFLYER) {
       int dx = w->world.player.object.position.x - f->position.x;
       int dz = w->world.player.object.position.z - f->position.z;
-      if ((dx > -1000 && dx < 1000) || (dz > -1000 && dz < 1000)) {
-        continue;
-      } else {
-        double a = (double)dz/(double)dx;
-        f->oxz = atan(1/a);
-        if (dx > 0 && dz < 0) {
-          f->oxz += (3/2 * WPI);
-        } else if (dx < 0 && dz > 0) {
-          f->oxz += (1/2 * WPI);
-        } else if (dx > 0 && dz > 0) {
-//          f->oxz += WPI;
-        } else  {
-          f->oxz += WPI;
+      ++nflyers;
+      if (w->world.player.object.position.y > 3000) {
+        if ((dx > -1000 && dx < 1000) || (dz > -1000 && dz < 1000)) {
+          continue;
+        } else {
+          double a = (double)dz/(double)dx;
+          f->oxz = atan(1/a);
+          if (dx > 0 && dz < 0) {
+            f->oxz += (3/2 * WPI);
+          } else if (dx < 0 && dz > 0) {
+            f->oxz += (1/2 * WPI);
+          } else if (dx > 0 && dz > 0) {
+//            f->oxz += WPI;
+          } else  {
+            f->oxz += WPI;
+          }
+          while (f->oxz < 0) {
+            f->oxz += (2 * WPI);
+          }
         }
-        while (f->oxz < 0) {
-          f->oxz += (2 * WPI);
+        if (f->position.y < w->world.player.object.position.y) {
+          f->oyz = .01;
+        } else if (f->position.y > w->world.player.object.position.y) {
+          f->oyz = (2 * WPI) - .01;
         }
       }
-      if (f->position.y < w->world.player.object.position.y) {
-        f->oyz = .01;
-      } else if (f->position.y > w->world.player.object.position.y) {
-        f->oyz = (2 * WPI) - .01;
-      }
+    }
+  }
+  if (nflyers < GOD_MIN_FLYERS) {
+    int d = GOD_MIN_FLYERS - nflyers;
+    for (int i=0; i < d; i++) {
+#ifdef _DEBUG
+      fprintf(stderr, "Creating adversarial flyer.\n");
+#endif
+      wobject_t o = { 0 };
+      object_init(&o, WOBJTYPE_AFLYER);
+      o.flags |= WOBJFLAG_FLYING;
+      o.position.y = 3000;
+      o.oxz = ((float)rand() / RAND_MAX) * WPI * 2;
+      o.speed_hor = 30;
+      o.subtype.flyer.circle = 1 / ((float)(rand() % 1000) + 1);
+      wobjectlist_push(&(w->world.objects), o);
     }
   }
 }

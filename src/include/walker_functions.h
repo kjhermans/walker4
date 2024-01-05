@@ -35,6 +35,16 @@ extern
 void fnv
   (uint64_t* state, void* mem, unsigned size);
 
+/* declared in ./src/lib//god_update.c */
+extern
+void god_update
+  (walker_t* w);
+
+/* declared in ./src/lib//god_update_slow.c */
+extern
+void god_update_slow
+  (walker_t* w);
+
 /* declared in ./src/lib//json.c */
 extern
 int json_string_compare
@@ -435,6 +445,11 @@ void walker_configure
 
 /* declared in ./src/lib//walker.c */
 extern
+void walker_update_slow
+  (walker_t* w);
+
+/* declared in ./src/lib//walker.c */
+extern
 void walker_update
   (walker_t* w);
 
@@ -524,11 +539,6 @@ void walker_db_object_iterate
     void(*fnc)(walker_t*w,wobject_t*,void*),
     void* arg
   );
-
-/* declared in ./src/lib//walker_god.c */
-extern
-void walker_god
-  (walker_t* w);
 
 /* declared in ./src/lib//walker_objects_load.c */
 extern

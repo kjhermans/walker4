@@ -245,9 +245,6 @@ typedef struct
   wplayer_t                 player;
   wobjectlist_t             objects;
   wlandscape_t              landscape;
-  struct {
-    wobjptrlist_t             flyers;
-  }                         god;
 }
 wworld_t;
 

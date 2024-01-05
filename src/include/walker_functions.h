@@ -169,6 +169,11 @@ extern
 void landscape_tile_optimize
   (wlandscape_t* ls, int tx, int tz, wtile_t* tiles[ 9 ]);
 
+/* declared in ./src/lib//object_attention.c */
+extern
+void object_attention_draw
+  (int px, int py, int pz);
+
 /* declared in ./src/lib//object_backward.c */
 extern
 void object_backward

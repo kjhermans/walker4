@@ -51,7 +51,8 @@ void object_draw
   int dz = o->position.z - p->object.position.z;
   int dy = o->position.y - p->object.position.y;
 
-  if (o->flags & WOBJFLAG_VISIBLE
+  if (o->draw
+      && o->flags & WOBJFLAG_VISIBLE
       && o->cache.tile.x >= vision.o.x
       && o->cache.tile.x <= vision.d.x
       && o->cache.tile.z >= vision.o.z
@@ -59,13 +60,22 @@ void object_draw
   {
     o->draw(o, w, (pt2d_t){ .x = dx, .z = dz });
 
+    if (dx > 1600 || dy > 1600 || dz > 1600) {
+      return;
+    }
     float oxz = atan2(dx, dz); if (oxz < 0) { oxz += (2 * WPI); }
-    float oyz = atan2(dz, dy); if (oyz < 0) { oyz += (2 * WPI); }
-    if (oxz >= p->object.oxz - 0.1
-        && oxz <= p->object.oxz + 0.1
-        && oyz >= p->object.oyz - 0.1
-        && oyz <= p->object.oyz + 0.1)
+    float oyz = atan2(dy, dz) - WPI; if (oyz < 0) { oyz += (2 * WPI); }
+    float d3d = sqrt(dx*dx + dy*dy + dz*dz);
+    if (d3d < 1) {
+      return;
+    }
+    float angle = 100/d3d;
+    if (oxz >= p->object.oxz - angle
+        && oxz <= p->object.oxz + angle
+        && oyz >= p->object.oyz - angle
+        && oyz <= p->object.oyz + angle)
     {
+      object_attention_draw(dx, o->position.y, dz);
       p->objectinview = o;
     }
   }

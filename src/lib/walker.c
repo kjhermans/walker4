@@ -486,6 +486,7 @@ void walker_warn
   text_object_set_text(w->display.overlay.warn, str);
   text_object_set_visibility(w->display.overlay.warn, 1);
   w->display.overlay.warn_timeout = 64;
+  fprintf(stderr, "Walker::warn %s\n", str);
 }
 
 void walker_dialog

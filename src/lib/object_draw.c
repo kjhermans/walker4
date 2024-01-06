@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * \brief
  */
 
+#include <time.h>
 #include <math.h>
 
 #include "walker.h"
@@ -43,7 +44,6 @@ void object_draw
   (wobject_t* o, walker_t* w, wplayer_t* p, vec2d_t vision)
 {
   ASSERT(o)
-  ASSERT(o->draw)
   ASSERT(w)
   ASSERT(p)
 
@@ -60,22 +60,27 @@ void object_draw
   {
     o->draw(o, w, (pt2d_t){ .x = dx, .z = dz });
 
-    if (dx > 1600 || dy > 1600 || dz > 1600) {
+    if (dx > 1600 || dy > 1600 || dz > 1600) { // TODO: definify 1600
       return;
     }
-    float oxz = atan2(dx, dz); if (oxz < 0) { oxz += (2 * WPI); }
-    float oyz = atan2(dy, dz) - WPI; if (oyz < 0) { oyz += (2 * WPI); }
     float d3d = sqrt(dx*dx + dy*dy + dz*dz);
+    float d2d = sqrt(dx*dx + dz*dz);
     if (d3d < 1) {
       return;
     }
-    float angle = 100/d3d;
-    if (oxz >= p->object.oxz - angle
-        && oxz <= p->object.oxz + angle
-        && oyz >= p->object.oyz - angle
-        && oyz <= p->object.oyz + angle)
+
+    float oxz = atan2(dx, dz); if (oxz < 0) { oxz += (2 * WPI); }
+    float oyz = atan2(-dy, d2d); if (oyz < 0) { oyz += (2 * WPI); }
+    float margin = 100/d3d;
+
+    if (oxz >= p->object.oxz - margin
+        && oxz <= p->object.oxz + margin
+        && oyz >= p->object.oyz - margin
+        && oyz <= p->object.oyz + margin)
     {
-      object_attention_draw(dx, o->position.y, dz);
+      if (time(0) % 2) {
+        object_attention_draw(dx, o->position.y, dz);
+      }
       p->objectinview = o;
     }
   }

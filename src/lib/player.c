@@ -35,6 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
+static char _dialogkeys[ 32 ] = { 0 };
+static char* dialogkeys = 0;
+
 /**
  *
  */
@@ -96,6 +99,8 @@ void player_handle_keys
   } else if (pkb_key_pressed('i')) {
     w->display.show_inventory = !(w->display.show_inventory);
     overlay_set_inventory(w->display.show_inventory);
+  } else if (pkb_key_pressed('r')) {
+    player_release(p, w);
   } else if (pkb_key_pressed('h')) {
     w->display.show_help = !(w->display.show_help);
     fprintf(stderr, "To toggle help, use 'h' again.\n");
@@ -106,6 +111,15 @@ void player_handle_keys
   if (pkb_key_pressed(w->config.keybindings.jump)) {
     if (p->object.cache.ground.supported) {
       p->object.speed_vert = PLAYER_JUMPSPEED;
+    }
+  }
+  if (dialogkeys) {
+    char* dk = dialogkeys;
+    while (*dk) {
+      if (pkb_key_pressed(*dk)) {
+        //..
+      }
+      ++dk;
     }
   }
 }
@@ -166,6 +180,25 @@ void player_update
     hud.angle_ascend = (p->object.oyz / WDEGRAD);
     hud.my_height = p->object.position.y;
   }
+}
+
+void player_release
+  (wplayer_t* p, walker_t* w)
+{
+  char str[ 128 ];
+  char opts[ 32 ];
+  char* opt = opts;
+
+  for (unsigned i=0; i < 10; i++) {
+    if (p->inventory[ i ].amount) {
+      *opt++ = '0' + i;
+    }
+  }
+  *opt++ = 0;
+  snprintf(str, sizeof(str), "Press to release [%s]", opts);
+  walker_warn(w, str);
+  strncpy(_dialogkeys, opts, strlen(opts));
+  dialogkeys = _dialogkeys;
 }
 
 void player_init

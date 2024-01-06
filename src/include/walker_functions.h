@@ -385,6 +385,11 @@ void player_update
 
 /* declared in ./src/lib//player.c */
 extern
+void player_release
+  (wplayer_t* p, walker_t* w);
+
+/* declared in ./src/lib//player.c */
+extern
 void player_init
   (wplayer_t* p);
 

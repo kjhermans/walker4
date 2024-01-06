@@ -237,7 +237,7 @@ wlandscape_t;
 MAKE_ARRAY_HEADER(wobject_t, wobjectlist_)
 MAKE_ARRAY_HEADER(wobject_t*, wobjptrlist_)
 
-#define GOD_MIN_FLYERS      16
+#define GOD_MIN_FLYERS      64
 
 typedef struct
 {

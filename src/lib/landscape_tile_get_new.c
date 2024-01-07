@@ -117,6 +117,37 @@ void landscape_tile_chasm
 NOCHASM: ;
 }
 
+static
+void landscape_tile_lake
+  (int tx, int tz, wtile_t* tile)
+{
+  int qx, qz;
+  uint32_t r;
+
+  landscape_tile_2quadrant(tx, tz, &qx, &qz, 0, 0);
+  r = landscape_random_get_topo(qx, qz, WTOPIC_LAKE);
+  if ((r % 8) == 0) {
+    int qctx = (qx * WQUADRANT_DIMENSION) + (WQUADRANT_DIMENSION / 2);
+    int qctz = (qz * WQUADRANT_DIMENSION) + (WQUADRANT_DIMENSION / 2);
+    
+    int dx = tx - qctx;
+    int dz = tz - qctz;
+
+    unsigned d = sqrt(dx*dx + dz*dz);
+    int div = 1;
+    if (d < (WQUADRANT_DIMENSION / 3)) {
+      div = 8;
+    } else if (d < (WQUADRANT_DIMENSION / 2)) {
+      div = 4;
+    } else if (d < (WQUADRANT_DIMENSION * 2 / 3)) {
+      div = 2;
+    }
+    if (tile->elevation[ 4 ] > WQUADRANT_DIMENSION) {
+      tile->elevation[ 4 ] /= div;
+    }
+  }
+}
+
 /**
  * Deterministically creates a landscape quadrant's tile.
  * This code should be called only when new tiles are created (ie when
@@ -135,4 +166,5 @@ void landscape_tile_get_new
     );
   landscape_tile_hill(tx, tz, tile);
   landscape_tile_chasm(tx, tz, tile);
+  landscape_tile_lake(tx, tz, tile);
 }

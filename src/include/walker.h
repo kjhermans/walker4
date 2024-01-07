@@ -220,6 +220,7 @@ wquadrant_t;
 #define WTOPIC_QELEVATION   3
 #define WTOPIC_HILLS        4
 #define WTOPIC_CHASM        5
+#define WTOPIC_LAKE         6
 
 typedef struct
 {

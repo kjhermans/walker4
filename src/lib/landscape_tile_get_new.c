@@ -135,11 +135,11 @@ void landscape_tile_lake
 
     unsigned d = sqrt(dx*dx + dz*dz);
     int div = 1;
-    if (d < (WQUADRANT_DIMENSION / 3)) {
+    if (d < (WQUADRANT_DIMENSION / 4)) {
       div = 8;
-    } else if (d < (WQUADRANT_DIMENSION / 2)) {
+    } else if (d < (WQUADRANT_DIMENSION / 3)) {
       div = 4;
-    } else if (d < (WQUADRANT_DIMENSION * 2 / 3)) {
+    } else if (d < (WQUADRANT_DIMENSION / 2)) {
       div = 2;
     }
     if (tile->elevation[ 4 ] > WQUADRANT_DIMENSION) {

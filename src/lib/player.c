@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static char _dialogkeys[ 32 ] = { 0 };
 static char* dialogkeys = 0;
+static void(*dialogfnc)(wplayer_t*,walker_t*,char) = 0;
 
 /**
  *
@@ -116,8 +117,8 @@ void player_handle_keys
   if (dialogkeys) {
     char* dk = dialogkeys;
     while (*dk) {
-      if (pkb_key_pressed(*dk)) {
-        //..
+      if (pkb_key_pressed(*dk) && dialogfnc) {
+        dialogfnc(p, w, *dk);
       }
       ++dk;
     }
@@ -182,10 +183,57 @@ void player_update
   }
 }
 
+void player_dialog
+  (
+    wplayer_t* p,
+    walker_t* w,
+    char* text,
+    char* opts,
+    void(*fnc)(wplayer_t*,walker_t*,char)
+  )
+{
+  char str[ 512 ];
+  (void)p;
+
+  snprintf(str, sizeof(str), "%s [%s]", text, opts);
+  strncpy(_dialogkeys, opts, strlen(opts));
+  dialogkeys = _dialogkeys;
+  dialogfnc = fnc;
+  walker_warn(w, str);
+}
+
+void player_release_charge
+  (wplayer_t* p, walker_t* w)
+{
+  wobject_t o = { 0 };
+
+  object_init(&o, WOBJTYPE_TNT);
+  o.flags |= WOBJFLAG_VISIBLE|WOBJFLAG_INITIALIZED;
+  o.position.x = p->object.position.x + 64;
+  o.position.z = p->object.position.z;
+  o.position.y = p->object.position.y;
+  wobjectlist_push(&(w->world.objects), o);
+}
+
+static
+void player_release2
+  (wplayer_t* p, walker_t* w, char key)
+{
+  unsigned ii = key - '0';
+
+  if (ii < 10 && p->inventory[ ii ].amount) { // INVENTORYSIZE definify
+    switch (p->inventory[ ii ].item) {
+    case 'c': // definify
+      --(p->inventory[ ii ].amount);
+      player_release_charge(p, w);
+      break;
+    }
+  }
+}
+
 void player_release
   (wplayer_t* p, walker_t* w)
 {
-  char str[ 128 ];
   char opts[ 32 ];
   char* opt = opts;
 
@@ -195,10 +243,7 @@ void player_release
     }
   }
   *opt++ = 0;
-  snprintf(str, sizeof(str), "Press to release [%s]", opts);
-  walker_warn(w, str);
-  strncpy(_dialogkeys, opts, strlen(opts));
-  dialogkeys = _dialogkeys;
+  player_dialog(p, w, "Press to release", opts, player_release2);
 }
 
 void player_init

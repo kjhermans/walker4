@@ -385,6 +385,22 @@ void player_update
 
 /* declared in ./src/lib//player.c */
 extern
+void player_dialog
+  (
+    wplayer_t* p,
+    walker_t* w,
+    char* text,
+    char* opts,
+    void(*fnc)(wplayer_t*,walker_t*,char)
+  );
+
+/* declared in ./src/lib//player.c */
+extern
+void player_release_charge
+  (wplayer_t* p, walker_t* w);
+
+/* declared in ./src/lib//player.c */
+extern
 void player_release
   (wplayer_t* p, walker_t* w);
 

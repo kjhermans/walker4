@@ -131,6 +131,7 @@ void player_flying
   if (p->object.flags & WOBJFLAG_FLYING) {
     if (p->object.cache.ground.supported) {
       p->object.flags &= ~(WOBJFLAG_FLYING);
+      p->object.oyz = 0;
       p->flyer.position = p->object.position;
       p->flyer.flags |= WOBJFLAG_VISIBLE;
       overlay_set_flying(0);
@@ -145,6 +146,7 @@ void player_flying
     if (d < 2 * WTILESIZE) {
       p->flyer.flags &= ~(WOBJFLAG_VISIBLE);
       p->object.flags |= WOBJFLAG_FLYING;
+      p->object.oyz = 0;
       overlay_set_flying(1);
       walker_warn(w, "You have mounted your flyer.");
     } else {

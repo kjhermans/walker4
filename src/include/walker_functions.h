@@ -365,6 +365,16 @@ void overlay_draw_redlamp
 
 /* declared in ./src/lib//overlay.c */
 extern
+void overlay_set_underwater
+  (int u);
+
+/* declared in ./src/lib//overlay.c */
+extern
+void overlay_draw_underwater
+  (unsigned* buf, unsigned width, unsigned height);
+
+/* declared in ./src/lib//overlay.c */
+extern
 void overlay
   (unsigned* buf, unsigned width, unsigned height);
 

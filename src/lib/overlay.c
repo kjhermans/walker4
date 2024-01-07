@@ -479,6 +479,73 @@ void overlay_draw_redlamp
   }
 }
 
+struct bubble
+{
+  unsigned y;
+  unsigned x;
+  unsigned speed;
+  unsigned size;
+};
+
+static int underwater = 0;
+static struct bubble bubbles[ 32 ] = { 0 };
+
+void overlay_set_underwater
+  (int u)
+{
+  underwater = u;
+}
+
+static
+void overlay_draw_underwater_bubble
+  (unsigned* buf, unsigned w, unsigned h, struct bubble* b)
+{
+  switch (b->size)
+  {
+  case 0:
+    overlay_setpixel_color(buf, w, h, b->x, b->y, 0x555555);
+    break;
+  case 1:
+    overlay_setpixel_color(buf, w, h, b->x-1, b->y, 0x777777);
+    overlay_setpixel_color(buf, w, h, b->x+1, b->y, 0x777777);
+    overlay_setpixel_color(buf, w, h, b->x, b->y-1, 0x777777);
+    overlay_setpixel_color(buf, w, h, b->x, b->y+1, 0x777777);
+    break;
+  case 2:
+  case 3:
+    overlay_setpixel_color(buf, w, h, b->x-1, b->y-1, 0x999999);
+    overlay_setpixel_color(buf, w, h, b->x,   b->y-1, 0x999999);
+    overlay_setpixel_color(buf, w, h, b->x+1, b->y,   0x999999);
+    overlay_setpixel_color(buf, w, h, b->x+1, b->y+1, 0x999999);
+    overlay_setpixel_color(buf, w, h, b->x-1, b->y+2, 0x999999);
+    overlay_setpixel_color(buf, w, h, b->x,   b->y+2, 0x999999);
+    overlay_setpixel_color(buf, w, h, b->x-2, b->y,   0x999999);
+    overlay_setpixel_color(buf, w, h, b->x-2, b->y+1, 0x999999);
+    break;
+  }
+}
+
+void overlay_draw_underwater
+  (unsigned* buf, unsigned width, unsigned height)
+{
+  for (unsigned i=0; i < 32; i++) {
+    if (bubbles[ i ].y == 0) {
+      bubbles[ i ].y = rand() % (height / 2);
+      bubbles[ i ].x = rand() % width;
+      bubbles[ i ].speed = (rand() % 16) + 1;
+      bubbles[ i ].size = rand() % 4;
+    } else {
+      overlay_draw_underwater_bubble(buf, width, height, &(bubbles[ i ]));
+      if (bubbles[ i ].y < 32) {
+        bubbles[ i ].y = 0;
+      } else {
+        bubbles[ i ].y -= bubbles[ i ].speed;
+        bubbles[ i ].x -= ((rand() % 3)-1);
+      }
+    }
+  }
+}
+
 void overlay
   (unsigned* buf, unsigned width, unsigned height)
 {
@@ -506,6 +573,9 @@ void overlay
     if (time(0) % 2) {
       overlay_draw_redlamp(buf, width, height);
     }
+  }
+  if (underwater) {
+    overlay_draw_underwater(buf, width, height);
   }
 }
 

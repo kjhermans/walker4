@@ -220,6 +220,7 @@ void display
   if (wglobal->world.player.object.position.y < 512) {
     PL_clear_vp(0, 0, 32);
     set_fade_to_white(0);
+    overlay_set_underwater(1);
   } else {
     PL_clear_vp(rgb_back[ 0 ], rgb_back[ 1 ], rgb_back[ 2 ]);
     if (!rgb_back[ 3 ]) {
@@ -227,6 +228,7 @@ void display
     } else {
       set_fade_to_white(1);
     }
+    overlay_set_underwater(0);
   }
 
   if (wglobal->world.player.object.position.y > 3000) {

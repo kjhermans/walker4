@@ -35,9 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct ol
 {
-  int player_seen;
-  int player_flyer_seen;
-  unsigned nflyers;
+  unsigned objcount[ WOBJTYPE_MAX ];
   unsigned maxid;
 };
 
@@ -55,9 +53,12 @@ void walker_load_object
   if (o->id > ol->maxid) {
     ol->maxid = o->id;
   }
+  if (o->type >= WOBJTYPE_MAX) {
+    return; // not a valid object
+  }
+  (ol->objcount[ o->type ])++;
   switch (o->type) {
   case WOBJTYPE_PLAYER:
-    ol->player_seen = 1;
     w->world.player.object = *o;
     if (o->flags & WOBJFLAG_FLYING) {
       overlay_set_flying(1);
@@ -65,14 +66,12 @@ void walker_load_object
     break;
   case WOBJTYPE_PFLYER:
     object_init(o, o->type);
-    ol->player_flyer_seen = 1;
     w->world.player.flyer = *o;
     if (o->flags & WOBJFLAG_FLYING) {
       w->world.player.flyer.flags &= ~(WOBJFLAG_VISIBLE);
     }
     break;
   case WOBJTYPE_AFLYER:
-    ++(ol->nflyers);
     object_init(o, o->type);
     wobjectlist_push(&(w->world.objects), *o);
     break;
@@ -91,7 +90,7 @@ void walker_objects_load
 {
   struct ol ol = { 0 };
   walker_db_object_iterate(w, walker_load_object, &ol);
-  if (!(ol.player_seen)) {
+  if (0 == ol.objcount[ WOBJTYPE_PLAYER]) {
     fprintf(stderr, "Walker::init Newly create player.\n");
     player_init(&(w->world.player));
   } else {
@@ -103,7 +102,7 @@ void walker_objects_load
     landscape_tile_2quadrant(tx, tz, &qx, &qz, 0, 0);
     landscape_cache_update(&(w->world.landscape), qx-1, qz-1);
   }
-  if (!(ol.player_flyer_seen)) {
+  if (0 == ol.objcount[ WOBJTYPE_PFLYER ]) {
     fprintf(stderr, "Walker::init Newly create player flyer.\n");
     flyer_init(&(w->world.player.flyer), WOBJTYPE_PFLYER);
   }

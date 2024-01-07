@@ -115,6 +115,7 @@ struct wobject
 #define WOBJTYPE_PFLYER     1 // player flyer
 #define WOBJTYPE_AFLYER     2 // adversarial flyer
 #define WOBJTYPE_TNT        3
+#define WOBJTYPE_MAX        4
   unsigned                  type;
 
 #define WOBJFLAG_INITIALIZED (1<<0)

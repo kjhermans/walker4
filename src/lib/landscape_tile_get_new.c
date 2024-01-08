@@ -142,7 +142,7 @@ void landscape_tile_lake
     } else if (d < (WQUADRANT_DIMENSION / 2)) {
       div = 2;
     }
-    if (tile->elevation[ 4 ] > WQUADRANT_DIMENSION) {
+    if (tile->elevation[ 4 ] > WTILESIZE) {
       tile->elevation[ 4 ] /= div;
     }
   }

@@ -172,7 +172,7 @@ void landscape_tile_optimize
 /* declared in ./src/lib//object_attention.c */
 extern
 void object_attention_draw
-  (int px, int py, int pz);
+  (int px, int py, int pz, int white);
 
 /* declared in ./src/lib//object_backward.c */
 extern

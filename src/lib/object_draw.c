@@ -78,9 +78,7 @@ void object_draw
         && oyz >= p->object.oyz - margin
         && oyz <= p->object.oyz + margin)
     {
-      if (time(0) % 2) {
-        object_attention_draw(dx, o->position.y, dz);
-      }
+      object_attention_draw(dx, o->position.y, dz, time(0) % 2);
       p->objectinview = o;
     }
   }

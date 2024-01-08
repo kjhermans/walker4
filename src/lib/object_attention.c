@@ -194,8 +194,19 @@ struct PL_OBJ obj[ 8 ] = {
 };
 
 void object_attention_draw
-  (int px, int py, int pz)
+  (int px, int py, int pz, int white)
 {
+  if (white) {
+    polys[ 0 ].color = 0xff0000;
+    polys[ 1 ].color = 0xff0000;
+    polys[ 2 ].color = 0xff0000;
+    polys[ 3 ].color = 0xff0000;
+  } else {
+    polys[ 0 ].color = 0x0000ff;
+    polys[ 1 ].color = 0x0000ff;
+    polys[ 2 ].color = 0x0000ff;
+    polys[ 3 ].color = 0x0000ff;
+  }
   PL_mst_push();
   PL_mst_translate(px, py, pz);
   for (unsigned i=0; i < 8; i++) {

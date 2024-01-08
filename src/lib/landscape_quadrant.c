@@ -91,6 +91,16 @@ void landscape_quadrant_get_new
     }
   }
   landscape_quadrant_optimize(ls, q);
+
+  {
+    uint32_t r = landscape_random_get_topo(qx, qz, WTOPIC_VILLAGE);
+    if ((r & 0x0f) == 0) {
+      int tx = ((r >> 4) & WQUADRANT_BITMASK);
+      int tz = ((r >> 12) & WQUADRANT_BITMASK);
+//..
+    }
+  }
+
   walker_db_quadrant_store(ls->walker, q);
 }
 

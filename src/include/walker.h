@@ -218,12 +218,17 @@ typedef struct
 }
 wquadrant_t;
 
+/**
+ * Random seeders for various aspects of the landscape,
+ * both on tile and on quadrant level.
+ */
 #define WTOPIC_COLOR        1
 #define WTOPIC_ELEVATION    2
 #define WTOPIC_QELEVATION   3
 #define WTOPIC_HILLS        4
 #define WTOPIC_CHASM        5
 #define WTOPIC_LAKE         6
+#define WTOPIC_VILLAGE      7
 
 typedef struct
 {

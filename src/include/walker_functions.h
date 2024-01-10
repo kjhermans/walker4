@@ -47,6 +47,11 @@ void god_update_slow
 
 /* declared in ./src/lib//house.c */
 extern
+void house_init
+  (wobject_t* o);
+
+/* declared in ./src/lib//house.c */
+extern
 void house_draw
   (wobject_t* o, walker_t* w, pt2d_t pt);
 
@@ -439,6 +444,11 @@ int queryargs
   )
   __attribute__ ((warn_unused_result));
 
+/* declared in ./src/lib//rock.c */
+extern
+void rock_create
+  ();
+
 /* declared in ./src/lib//text.c */
 extern
 void text_object_init
@@ -462,6 +472,11 @@ void text_object_set_visibility
 /* declared in ./src/lib//tnt.c */
 extern
 void tnt_init
+  (wobject_t* o);
+
+/* declared in ./src/lib//tnt.c */
+extern
+void tnt_create
   ();
 
 /* declared in ./src/lib//tnt.c */

@@ -33,6 +33,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
+void house_init
+  (wobject_t* o)
+{
+  o->type = WOBJTYPE_HOUSE;
+  o->draw = house_draw;
+  o->update = NULL;
+  o->engage = NULL;
+}
+
 /**
  *
  */

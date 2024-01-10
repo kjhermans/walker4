@@ -41,6 +41,15 @@ static int tntimg[ PL_REQ_TEX_DIM * PL_REQ_TEX_DIM ] = IMG;
 static struct PL_OBJ* tntcube;
 
 void tnt_init
+  (wobject_t* o)
+{
+  o->type = WOBJTYPE_TNT;
+  o->draw = tnt_draw;
+  o->update = tnt_update;
+  o->engage = tnt_engage;
+}
+
+void tnt_create
   ()
 {
   PL_texture(&tnttex);

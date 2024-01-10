@@ -40,5 +40,6 @@ void world_init
   (wworld_t* world, unsigned seed, walker_t* w)
 {
   landscape_init(&(world->landscape), seed, w);
-  tnt_init();
+  tnt_create();
+  rock_create();
 }

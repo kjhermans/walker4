@@ -32,32 +32,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "walker.h"
+#include "rock.h"
 
-void object_init
-  (wobject_t* o, unsigned type)
+static struct PL_TEX rocktex = { 0 };
+static int rockimg[ PL_REQ_TEX_DIM * PL_REQ_TEX_DIM ] = IMG;
+static struct PL_OBJ* rockcube;
+
+void rock_create
+  ()
 {
-  ASSERT(o)
-
-  switch (type) {
-  case WOBJTYPE_PFLYER:
-  case WOBJTYPE_AFLYER:
-    flyer_init(o, type);
-    break;
-  case WOBJTYPE_TNT:
-    tnt_init(o);
-    break;
-  case WOBJTYPE_HOUSE:
-    house_init(o);
-    break;
-  default:
-    fprintf(stderr, "Unknown object type %u.\n", type);
-    o->draw = NULL;
-    o->update = NULL;
-    o->engage = NULL;
-  }
-  o->type = type;
-  if (!(o->id)) {
-    o->id = object_get_id();
-  }
-  o->flags |= WOBJFLAG_INITIALIZED;
+  PL_texture(&rocktex);
+  rocktex.data = (int*)rockimg;
+  rockcube = PL_gen_box(128, 128, 128, PL_ALL, 255, 255, 255);
+  PL_texture(NULL);
 }
+

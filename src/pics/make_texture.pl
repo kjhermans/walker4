@@ -40,7 +40,8 @@ for (my $i=0; $i < $dimension; $i++) {
     if ($rshift) { $r = int($r * $rshift); if ($r >= 256) { $r = 255; } }
     if ($gshift) { $g = int($g * $gshift); if ($g >= 256) { $g = 255; } }
     if ($bshift) { $b = int($b * $bshift); if ($b >= 256) { $b = 255; } }
-    print "  ($r<<16)|($g<<8)|$b";
+    #print "  ($r<<16)|($g<<8)|$b";
+    print sprintf("0x%.2x%.2x%.2x", $r, $g, $b);
     if ($j < $dimension-1) {
       print ",";
     }

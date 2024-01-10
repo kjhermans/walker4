@@ -115,7 +115,11 @@ struct wobject
 #define WOBJTYPE_PFLYER     1 // player flyer
 #define WOBJTYPE_AFLYER     2 // adversarial flyer
 #define WOBJTYPE_TNT        3
-#define WOBJTYPE_MAX        4
+#define WOBJTYPE_HOUSE      4
+#define WOBJTYPE_MAX        5
+#define WOBJTYPE_STRINGS char* objstrings[ WOBJTYPE_MAX ] = { \
+  "player", "pflyer", "aflyer", "tnt", "house" \
+}
   unsigned                  type;
 
 #define WOBJFLAG_INITIALIZED (1<<0)
@@ -151,6 +155,9 @@ struct wobject
       int                       set;
       int                       timer;
     }                         tnt;
+    struct {
+      unsigned                  type;
+    }                         house;
   }                         subtype;
 };
 

@@ -45,6 +45,11 @@ extern
 void god_update_slow
   (walker_t* w);
 
+/* declared in ./src/lib//house.c */
+extern
+void house_draw
+  (wobject_t* o, walker_t* w, pt2d_t pt);
+
 /* declared in ./src/lib//json.c */
 extern
 int json_string_compare

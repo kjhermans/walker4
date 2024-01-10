@@ -69,6 +69,37 @@ void landscape_quadrant_optimize
   }
 }
 
+static
+void landscape_quadrant_village
+  (wlandscape_t* ls, int qx, int qz, wquadrant_t* q)
+{
+  uint32_t r = landscape_random_get_topo(qx, qz, WTOPIC_VILLAGE);
+  unsigned nhouses;
+  unsigned havevillage;
+  unsigned havehouse;
+
+  srand(r);
+  havevillage = rand();
+  if ((havevillage & 0x0f) == 0) {
+    int tx = WQUADRANT_DIMENSION / 4 + (rand() % (WQUADRANT_DIMENSION >> 1));
+    int tz = WQUADRANT_DIMENSION / 4 + (rand() % (WQUADRANT_DIMENSION >> 1));
+    nhouses = rand() & 0x0f;
+    for (unsigned i=0; i < nhouses; i++) {
+      havehouse = rand() % 2;
+      if (havehouse) {
+        wobject_t o = { 0 };
+        object_init(&o, WOBJTYPE_HOUSE);
+        o.position.x = ((qx * WQUADRANT_DIMENSION) + tx) * WTILESIZE;
+        o.position.y = 4096;
+        o.position.z = ((qz * WQUADRANT_DIMENSION) + tz) * WTILESIZE;
+        o.oxz = (float)(rand() % 360) / WDEGRAD;
+        o.subtype.house.type = rand() % 4;
+        wobjectlist_push(&(ls->walker->world.objects), o);
+      }
+    }
+  }
+}
+
 void landscape_quadrant_get_new
   (wlandscape_t* ls, wquadrant_t* q, int qx, int qz)
 {
@@ -91,16 +122,7 @@ void landscape_quadrant_get_new
     }
   }
   landscape_quadrant_optimize(ls, q);
-
-  {
-    uint32_t r = landscape_random_get_topo(qx, qz, WTOPIC_VILLAGE);
-    if ((r & 0x0f) == 0) {
-      int tx = ((r >> 4) & WQUADRANT_BITMASK);
-      int tz = ((r >> 12) & WQUADRANT_BITMASK);
-//..
-    }
-  }
-
+//  landscape_quadrant_village(ls, qx, qz, q);
   walker_db_quadrant_store(ls->walker, q);
 }
 

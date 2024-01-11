@@ -36,6 +36,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
+#define MAXHOUSES 16
+
+static
+int housepos[ MAXHOUSES ][ 2 ] = {
+  {  0,  0 },
+  {  0,  1 },
+  {  1,  1 },
+  {  2,  0 },
+  {  2, -1 },
+  {  1. -2 },
+  {  0, -3 },
+  { -1, -3 },
+  { -2, -2 },
+  { -2, -1 },
+  { -3,  0 },
+  { -2,  1 },
+  { -2,  2 },
+  { -1,  3 },
+  {  0,  3 },
+  {  1,  3 }
+};
+
 void landscape_quadrant_village
   (wlandscape_t* ls, int qx, int qz, wquadrant_t* q)
 {
@@ -53,20 +75,21 @@ void landscape_quadrant_village
   if ((havevillage & 0x0f) == 0) {
     int tx = WQUADRANT_DIMENSION / 4 + (rand() % (WQUADRANT_DIMENSION >> 1));
     int tz = WQUADRANT_DIMENSION / 4 + (rand() % (WQUADRANT_DIMENSION >> 1));
-    nhouses = rand() & 0x0f;
+    nhouses = rand() & (MAXHOUSES-1);
     for (unsigned i=0; i < nhouses; i++) {
       havehouse = rand() % 2;
       if (havehouse) {
+        int hx = tx + housepos[ i ][ 0 ];
+        int hz = tz + housepos[ i ][ 1 ];
         wobject_t o = { 0 };
         object_init(&o, WOBJTYPE_HOUSE);
         o.flags |= WOBJFLAG_VISIBLE;
-        o.position.x = ((qx * WQUADRANT_DIMENSION) + tx) * WTILESIZE;
+        o.position.x = ((qx * WQUADRANT_DIMENSION) + hx) * WTILESIZE;
         o.position.y = 4096;
-        o.position.z = ((qz * WQUADRANT_DIMENSION) + tz) * WTILESIZE;
+        o.position.z = ((qz * WQUADRANT_DIMENSION) + hz) * WTILESIZE;
         o.oxz = (float)(rand() % 360) / WDEGRAD;
         o.subtype.house.type = rand() % 4;
         wobjectlist_push(&(ls->walker->world.objects), o);
-break; // just one house
       }
     }
   }

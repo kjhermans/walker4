@@ -41,7 +41,7 @@ void object_forward
 {
   ASSERT(o)
 
-  unsigned maxspeed = MAXSPEED;
+  int maxspeed = MAXSPEED;
 
   switch (o->mode) {
   case WOBJMODE_FROZEN:

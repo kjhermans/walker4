@@ -89,6 +89,7 @@ void landscape_quadrant_village
       if (havehouse) {
         wobject_t o = { 0 };
         object_init(&o, WOBJTYPE_HOUSE);
+        o.flags |= WOBJFLAG_VISIBLE;
         o.position.x = ((qx * WQUADRANT_DIMENSION) + tx) * WTILESIZE;
         o.position.y = 4096;
         o.position.z = ((qz * WQUADRANT_DIMENSION) + tz) * WTILESIZE;

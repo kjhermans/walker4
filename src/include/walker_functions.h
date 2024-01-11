@@ -52,8 +52,13 @@ void house_init
 
 /* declared in ./src/lib//house.c */
 extern
+void house_update
+  (wobject_t* o, walker_t* w);
+
+/* declared in ./src/lib//house.c */
+extern
 void house_draw
-  (wobject_t* o, walker_t* w, pt2d_t pt);
+  (wobject_t* o, walker_t* w, pt2d_t p);
 
 /* declared in ./src/lib//json.c */
 extern
@@ -448,6 +453,11 @@ int queryargs
 extern
 void rock_create
   ();
+
+/* declared in ./src/lib//rock.c */
+extern
+void rock_draw
+  (wobject_t* o, walker_t* w, pt2d_t p, float rx);
 
 /* declared in ./src/lib//text.c */
 extern

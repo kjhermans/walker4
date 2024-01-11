@@ -38,14 +38,25 @@ void house_init
 {
   o->type = WOBJTYPE_HOUSE;
   o->draw = house_draw;
-  o->update = NULL;
+  o->update = house_update;
   o->engage = NULL;
 }
 
 /**
  *
  */
-void house_draw
-  (wobject_t* o, walker_t* w, pt2d_t pt)
+void house_update
+  (wobject_t* o, walker_t* w)
 {
+  int m;
+
+  object_gravity(o);
+  m = object_move(o, &(w->world.landscape)); (void)m;
+}
+
+void house_draw
+  (wobject_t* o, walker_t* w, pt2d_t p)
+{
+  rock_draw(o, w, (pt2d_t){ .x = p.x, .z = p.z-64 }, o->subtype.flyer.oyz);
+  rock_draw(o, w, (pt2d_t){ .x = p.x, .z = p.z+64 }, o->subtype.flyer.oyz);
 }

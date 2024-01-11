@@ -42,12 +42,14 @@ void object_debug
   ASSERT(o)
 
   fprintf(stderr,
-    "Object: id:%u, typ:%s, pos:%d,%d,%d, or:%f,%f, spd:%d,%d mod:%d, sup:%d\n",
+    "Object: id:%u, typ:%s, pos:%d,%d,%d, or:%f,%f, spd:%d,%d mod:%d, "
+    "flg:%u, sup:%d\n",
     o->id, objstrings[ o->type ],
     o->position.x, o->position.y, o->position.z, 
     o->oxz, o->oyz,
     o->speed_hor, o->speed_vert,
     o->mode,
+    o->flags,
     o->cache.ground.supported
   );
 }

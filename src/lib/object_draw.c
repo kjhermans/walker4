@@ -63,6 +63,10 @@ void object_draw
     if (dx > 1600 || dy > 1600 || dz > 1600) { // TODO: definify 1600
       return;
     }
+    if (NULL == o->engage) {
+      return;
+    }
+
     float d3d = sqrt(dx*dx + dy*dy + dz*dz);
     float d2d = sqrt(dx*dx + dz*dz);
     if (d3d < 1) {

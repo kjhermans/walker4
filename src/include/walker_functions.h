@@ -76,6 +76,11 @@ extern
 void json_free
   (json_t* json);
 
+/* declared in ./src/lib//landscape_cache_update.c */
+extern
+void landscape_cache_update
+  (wlandscape_t* ls, int qx, int qz);
+
 /* declared in ./src/lib//landscape_explosion.c */
 extern
 void landscape_explosion
@@ -96,25 +101,25 @@ extern
 void landscape_pos2tile
   (int px, int pz, int* tx, int* tz);
 
-/* declared in ./src/lib//landscape_quadrant.c */
-extern
-void landscape_quadrant_optimize
-  (wlandscape_t* ls, wquadrant_t* q);
-
-/* declared in ./src/lib//landscape_quadrant.c */
-extern
-void landscape_quadrant_get_new
-  (wlandscape_t* ls, wquadrant_t* q, int qx, int qz);
-
-/* declared in ./src/lib//landscape_quadrant.c */
+/* declared in ./src/lib//landscape_quadrant_get.c */
 extern
 void landscape_quadrant_get
   (wlandscape_t* ls, int qx, int qz, wquadrant_t* q);
 
-/* declared in ./src/lib//landscape_quadrant.c */
+/* declared in ./src/lib//landscape_quadrant_get_new.c */
 extern
-void landscape_cache_update
-  (wlandscape_t* ls, int qx, int qz);
+void landscape_quadrant_get_new
+  (wlandscape_t* ls, wquadrant_t* q, int qx, int qz);
+
+/* declared in ./src/lib//landscape_quadrant_optimize.c */
+extern
+void landscape_quadrant_optimize
+  (wlandscape_t* ls, wquadrant_t* q);
+
+/* declared in ./src/lib//landscape_quadrant_village.c */
+extern
+void landscape_quadrant_village
+  (wlandscape_t* ls, int qx, int qz, wquadrant_t* q);
 
 /* declared in ./src/lib//landscape_random.c */
 extern

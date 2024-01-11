@@ -95,6 +95,7 @@ void landscape_quadrant_village
         o.oxz = (float)(rand() % 360) / WDEGRAD;
         o.subtype.house.type = rand() % 4;
         wobjectlist_push(&(ls->walker->world.objects), o);
+break; // just one house
       }
     }
   }
@@ -122,7 +123,7 @@ void landscape_quadrant_get_new
     }
   }
   landscape_quadrant_optimize(ls, q);
-//  landscape_quadrant_village(ls, qx, qz, q);
+  landscape_quadrant_village(ls, qx, qz, q);
   walker_db_quadrant_store(ls->walker, q);
 }
 

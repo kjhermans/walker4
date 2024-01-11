@@ -56,9 +56,10 @@ int vertices[] = {
   -FWIDTH,  FPAUSE,  FPAUSE, 0,
   -FPAUSE,  FPAUSE,  FWIDTH, 0,
    FWIDTH,  FPAUSE,  FPAUSE, 0,
-   FPAUSE,  FPAUSE,  FWIDTH, 0,
+   FPAUSE,  FPAUSE,  FWIDTH, 0
 };
 
+static
 struct PL_POLY polys[] = {
   {
     .n_verts = 4,

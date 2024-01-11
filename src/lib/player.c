@@ -56,13 +56,13 @@ void player_handle_keys
   } else if (pkb_key_held(FW_KEY_ARROW_LEFT)) {
     object_turnleft(&(p->object), PLAYER_TURNRATE);
   } else if (pkb_key_held(FW_KEY_ARROW_UP)) {
-    if (p->object.flags & WOBJFLAG_FLYING) {
+    if (p->object.mode == WOBJMODE_FLYING) {
       object_turndown(&(p->object), PLAYER_TURNRATE);
     } else {
       object_turnup(&(p->object), PLAYER_TURNRATE);
     }
   } else if (pkb_key_held(FW_KEY_ARROW_DOWN)) {
-    if (p->object.flags & WOBJFLAG_FLYING) {
+    if (p->object.mode == WOBJMODE_FLYING) {
       object_turnup(&(p->object), PLAYER_TURNRATE);
     } else {
       object_turndown(&(p->object), PLAYER_TURNRATE);
@@ -84,10 +84,10 @@ void player_handle_keys
   } else if (pkb_key_pressed('l')) {
     p->object.oyz = 0;
   } else if (pkb_key_pressed('a')) {
-    if (p->object.flags & WOBJFLAG_FLYING) {
-       p->object.flags &= ~(WOBJFLAG_FLYING);
+    if (p->object.mode == WOBJMODE_FLYING) {
+       p->object.mode = WOBJMODE_WALKING;
     } else {
-       p->object.flags |= (WOBJFLAG_FLYING);
+       p->object.mode = WOBJMODE_FLYING;
     }
 #endif
   } else if (pkb_key_pressed('x')) {
@@ -128,9 +128,9 @@ void player_handle_keys
 void player_flying
   (wplayer_t* p, walker_t* w)
 {
-  if (p->object.flags & WOBJFLAG_FLYING) {
+  if (p->object.mode == WOBJMODE_FLYING) {
     if (p->object.cache.ground.supported) {
-      p->object.flags &= ~(WOBJFLAG_FLYING);
+      p->object.mode = WOBJMODE_WALKING;
       p->object.oyz = 0;
       p->flyer.position = p->object.position;
       p->flyer.flags |= WOBJFLAG_VISIBLE;
@@ -145,7 +145,7 @@ void player_flying
     int d = sqrt(dx*dx + dz*dz);
     if (d < 2 * WTILESIZE) {
       p->flyer.flags &= ~(WOBJFLAG_VISIBLE);
-      p->object.flags |= WOBJFLAG_FLYING;
+      p->object.mode = WOBJMODE_FLYING;
       p->object.oyz = 0;
       overlay_set_flying(1);
       walker_warn(w, "You have mounted your flyer.");
@@ -178,7 +178,7 @@ void player_update
       );
     }
   }
-  if (p->object.flags & WOBJFLAG_FLYING) {
+  if (p->object.mode == WOBJMODE_FLYING) {
     hud.angle_compass = (p->object.oxz / WDEGRAD);
     hud.angle_ascend = (p->object.oyz / WDEGRAD);
     hud.my_height = p->object.position.y;
@@ -254,7 +254,7 @@ void player_init
   p->object.position.x = WQUADRANT_DIMENSION * WTILESIZE / 2;
   p->object.position.y = 4096;
   p->object.position.z = WQUADRANT_DIMENSION * WTILESIZE / 2;
-  p->object.flags &= ~(WOBJFLAG_FLYING);
+  p->object.mode = WOBJMODE_WALKING;
   p->flyer.flags |= WOBJFLAG_VISIBLE;
   p->flyer.position.x = 1024 + WQUADRANT_DIMENSION * WTILESIZE / 2;
   p->flyer.position.y = 4096;

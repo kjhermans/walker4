@@ -33,18 +33,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "walker.h"
 
+static
+WOBJTYPE_STRINGS;
+
 void object_debug
   (wobject_t* o)
 {
   ASSERT(o)
 
   fprintf(stderr,
-    "Object: id:%u, typ:%d, pos:%d,%d,%d, or:%f,%f, spd:%d,%d fl:%d, sup:%d\n",
-    o->id, o->type,
+    "Object: id:%u, typ:%s, pos:%d,%d,%d, or:%f,%f, spd:%d,%d mod:%d, sup:%d\n",
+    o->id, objstrings[ o->type ],
     o->position.x, o->position.y, o->position.z, 
     o->oxz, o->oyz,
     o->speed_hor, o->speed_vert,
-    o->flags & WOBJFLAG_FLYING,
+    o->mode,
     o->cache.ground.supported
   );
 }

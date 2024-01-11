@@ -48,7 +48,7 @@ int object_move
   int camrx = (int)(o->oyz / PL_RAD256);
   o->position.x += (o->speed_hor * PL_sin[camry & PL_TRIGMSK]) >> PL_P;
   o->position.z += (o->speed_hor * PL_cos[camry & PL_TRIGMSK]) >> PL_P;
-  if (o->flags & WOBJFLAG_FLYING) {
+  if (o->mode == WOBJMODE_FLYING) {
     o->position.y += -((o->speed_hor * PL_sin[camrx & PL_TRIGMSK]) >> PL_P);
   } else {
     o->position.y += o->speed_vert;

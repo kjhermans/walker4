@@ -84,7 +84,7 @@ void god_update_slow
 #endif
       wobject_t o = { 0 };
       object_init(&o, WOBJTYPE_AFLYER);
-      o.flags |= WOBJFLAG_FLYING;
+      o.mode = WOBJMODE_FLYING;
       o.position.y = 3000;
       o.oxz = ((float)rand() / RAND_MAX) * WPI * 2;
       o.speed_hor = 30;

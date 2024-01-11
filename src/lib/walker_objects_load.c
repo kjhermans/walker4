@@ -60,14 +60,14 @@ void walker_load_object
   switch (o->type) {
   case WOBJTYPE_PLAYER:
     w->world.player.object = *o;
-    if (o->flags & WOBJFLAG_FLYING) {
+    if (o->mode == WOBJMODE_FLYING) {
       overlay_set_flying(1);
     }
     break;
   case WOBJTYPE_PFLYER:
     object_init(o, o->type);
     w->world.player.flyer = *o;
-    if (o->flags & WOBJFLAG_FLYING) {
+    if (o->mode == WOBJMODE_FLYING) {
       w->world.player.flyer.flags &= ~(WOBJFLAG_VISIBLE);
     }
     break;

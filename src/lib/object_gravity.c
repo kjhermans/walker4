@@ -42,7 +42,7 @@ void object_gravity
 {
   ASSERT(o)
 
-  if (o->flags & WOBJFLAG_FLYING || o->cache.ground.supported) {
+  if (o->mode == WOBJMODE_FLYING || o->cache.ground.supported) {
     return;
   }
   if ((o->speed_vert -= GRAVITY) < TERMINALVELOCITY) {

@@ -122,9 +122,14 @@ struct wobject
 }
   unsigned                  type;
 
+#define WOBJMODE_FROZEN     0
+#define WOBJMODE_WALKING    1
+#define WOBJMODE_FLYING     2
+#define WOBJMODE_SAILING    3
+  unsigned                  mode;
+
 #define WOBJFLAG_INITIALIZED (1<<0)
 #define WOBJFLAG_VISIBLE     (1<<1)
-#define WOBJFLAG_FLYING      (1<<2)
   unsigned                  flags;
 
   pt3d_t                    position;   /* high res position ('pixels') */

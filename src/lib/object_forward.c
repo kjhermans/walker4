@@ -41,7 +41,24 @@ void object_forward
 {
   ASSERT(o)
 
-  if ((o->speed_hor += 2) > MAXSPEED) {
-    o->speed_hor = MAXSPEED;
+  unsigned maxspeed = MAXSPEED;
+
+  switch (o->mode) {
+  case WOBJMODE_FROZEN:
+    o->speed_hor = 0;
+    return;
+  case WOBJMODE_WALKING:
+    maxspeed = 8;
+    break;
+  case WOBJMODE_FLYING:
+    maxspeed = 32;
+    break;
+  case WOBJMODE_SAILING:
+    maxspeed = 4;
+    break;
+  }
+
+  if ((o->speed_hor += 2) > maxspeed) {
+    o->speed_hor = maxspeed;
   }
 }
